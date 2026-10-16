@@ -1,6 +1,6 @@
 # Trương Ngọc Hoà 0.1.10
 
-[Tải bộ cài Windows](https://github.com/MachHongHai/HaizFlow/releases/download/v0.1.10/HaizFlow-0.1.10-Setup.exe)
+[Tải bộ cài Windows](https://github.com/NgocHoa08/HFL/releases/download/v0.1.10/TruongNgocHoa-0.1.10-Setup.exe)
 
 ## Thay đổi
 

@@ -41,7 +41,7 @@
 
 #define AppName "TruongNgocHoa"
 #define AppPublisher "Mach Hong Hai"
-#define AppUrl "https://github.com/MachHongHai/HaizFlow"
+#define AppUrl "https://github.com/NgocHoa08/HFL"
 #ifndef VersionedLayout
   #define VersionedLayout "0"
 #endif

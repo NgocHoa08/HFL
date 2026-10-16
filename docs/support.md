@@ -43,7 +43,7 @@ The installer is unsigned. Windows may show an unknown publisher or apply a poli
 
 ## Contact support
 
-Open a request on [GitHub Issues](https://github.com/MachHongHai/HaizFlow/issues) and include:
+Open a request on [GitHub Issues](https://github.com/NgocHoa08/HFL/issues) and include:
 
 1. Your Trương Ngọc Hoà and Windows versions.
 2. The steps and tool/model name.

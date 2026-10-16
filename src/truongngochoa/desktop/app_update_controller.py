@@ -21,9 +21,9 @@ from PySide6.QtCore import QObject, Signal
 
 from truongngochoa import __version__
 
-LATEST_RELEASE_API = "https://api.github.com/repos/MachHongHai/TruongNgocHoa/releases/latest"
-RELEASES_URL = "https://github.com/MachHongHai/TruongNgocHoa/releases"
-_RELEASE_URL_PREFIX = "https://github.com/MachHongHai/TruongNgocHoa/releases/"
+LATEST_RELEASE_API = "https://api.github.com/repos/NgocHoa08/HFL/releases/latest"
+RELEASES_URL = "https://github.com/NgocHoa08/HFL/releases"
+_RELEASE_URL_PREFIX = "https://github.com/NgocHoa08/HFL/releases/"
 _DOWNLOAD_URL_PREFIX = _RELEASE_URL_PREFIX + "download/"
 
 

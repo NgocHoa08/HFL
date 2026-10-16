@@ -336,14 +336,14 @@ Rectangle {
             id: guideItem
 
             text: qsTr("Hướng dẫn sử dụng")
-            onTriggered: AppController.openExternalUrl("https://github.com/MachHongHai/TruongNgocHoa/blob/main/docs/user-guide.vi.md")
+            onTriggered: AppController.openExternalUrl("https://github.com/NgocHoa08/HFL/blob/main/docs/user-guide.vi.md")
         }
 
         AppMenuItem {
             id: reportIssueItem
 
             text: qsTr("Báo lỗi")
-            onTriggered: AppController.openExternalUrl("https://github.com/MachHongHai/TruongNgocHoa/issues/new")
+            onTriggered: AppController.openExternalUrl("https://github.com/NgocHoa08/HFL/issues/new")
         }
 
         MenuSeparator {}

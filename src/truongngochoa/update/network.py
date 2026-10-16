@@ -13,8 +13,8 @@ from urllib.parse import urlparse
 from .filesystem import UpdateError, child, no_links, version
 from .manifest import Manifest
 
-API = "https://api.github.com/repos/MachHongHai/TruongNgocHoa/releases/latest"
-REPOSITORY = "https://github.com/MachHongHai/TruongNgocHoa"
+API = "https://api.github.com/repos/NgocHoa08/HFL/releases/latest"
+REPOSITORY = "https://github.com/NgocHoa08/HFL"
 CDN_HOSTS = {"release-assets.githubusercontent.com", "objects.githubusercontent.com"}
 
 

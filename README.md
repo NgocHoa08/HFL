@@ -81,7 +81,7 @@ Gemini, Zernio and other external services have their own terms, limits and char
 
 ## Install and get started
 
-**[Download the Windows installer](https://github.com/MachHongHai/HaizFlow/releases/download/v1.0.1/HaizFlow-1.0.1-Setup.exe).** Run this EXE only; do not download or extract Core files. Resource packs are installed inside TruongNgocHoa. Version 1.0.0 can update directly in the app. [Release and installation details](https://github.com/MachHongHai/HaizFlow/releases/latest).
+**[Download the Windows installer](https://github.com/NgocHoa08/HFL/releases/latest).** Run this EXE only; do not download or extract Core files. Resource packs are installed inside TruongNgocHoa. Version 1.0.0 can update directly in the app. [Release and installation details](https://github.com/NgocHoa08/HFL/releases/latest).
 
 1. Install and open TruongNgocHoa. Vietnamese is the default; English is available in Settings.
 2. Choose CPU or NVIDIA GPU in **Settings → General**, then install the resource packs you need.
@@ -102,11 +102,11 @@ Trương Ngọc Hoà is free to use under [Trương Ngọc Hoà Source-Available
 
 You need permission to use imported video, music and voice samples. See [NOTICE](NOTICE) and [third-party notices](THIRD_PARTY_NOTICES.md). The [licensing review](docs/licensing-review.md) and [inactive draft terms](legal/LICENSE-SOURCE-AVAILABLE-DRAFT.md) are retained separately.
 
-Trương Ngọc Hoà uses Qt/PySide under LGPL and FFmpeg under GPL/LGPL, depending on the component. [Bundled library sources](https://github.com/MachHongHai/HaizFlow/releases/download/v1.0.0/HaizFlow-1.0.0-ThirdPartySources.zip) and [library replacement instructions](docs/third-party-library-replacement.md) are provided separately. Independent library-license rights remain available.
+Trương Ngọc Hoà uses Qt/PySide under LGPL and FFmpeg under GPL/LGPL, depending on the component. [Bundled library sources](https://github.com/NgocHoa08/HFL/releases/latest) and [library replacement instructions](docs/third-party-library-replacement.md) are provided separately. Independent library-license rights remain available.
 
 ## Support and contributions
 
-See [Help](docs/support.md) for resources, API keys and data management. You can also [send feedback or request support](https://github.com/MachHongHai/HaizFlow/issues). Never include keys or private data.
+See [Help](docs/support.md) for resources, API keys and data management. You can also [send feedback or request support](https://github.com/NgocHoa08/HFL/issues). Never include keys or private data.
 
 Source installation, testing and packaging are covered in the [development guide](docs/development.md). See the [technical documentation](docs/README.md) to contribute code.
 

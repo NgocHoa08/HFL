@@ -75,7 +75,7 @@ AppDialog {
             AboutLinkRow {
                 label: qsTr("Thành phần")
                 value: qsTr("Giấy phép và thông báo")
-                destination: "https://github.com/MachHongHai/TruongNgocHoa/blob/main/THIRD_PARTY_NOTICES.md"
+                destination: "https://github.com/NgocHoa08/HFL/blob/main/THIRD_PARTY_NOTICES.md"
                 copyValue: destination
             }
         }

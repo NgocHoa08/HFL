@@ -19,7 +19,7 @@ Do not install production dependencies ad hoc into a global interpreter. The rep
 ## 2. Clone and install
 
 ```powershell
-git clone https://github.com/MachHongHai/HaizFlow.git
+git clone https://github.com/NgocHoa08/HFL.git
 cd Trương Ngọc Hoà
 powershell -ExecutionPolicy Bypass -File .\scripts\install-desktop-env.ps1
 ```
@@ -227,7 +227,7 @@ Dependency or model changes also require [dependency security](dependency-securi
 - [ ] `scripts/test.ps1` passes.
 - [ ] No generated models, media, caches, credentials, or build output are committed.
 
-Open an issue at [MachHongHai/TruongNgocHoa](https://github.com/MachHongHai/HaizFlow/issues) when an architectural decision needs discussion before implementation.
+Open an issue at [MachHongHai/TruongNgocHoa](https://github.com/NgocHoa08/HFL/issues) when an architectural decision needs discussion before implementation.
 
 ## 16. External engine packs
 
@@ -269,7 +269,7 @@ $env:TRUONGNGOCHOA_SIGN_CERT_PASSWORD = "<certificate-password>"
   -Profile cuda128 `
   -Version 1 `
   -SignCertificatePath C:\secure\truongngochoa-signing.pfx `
-  -ReleaseUrl https://github.com/MachHongHai/HaizFlow/releases/download/v1/engine-cuda128-py313-1.zip
+  -ReleaseUrl https://github.com/NgocHoa08/HFL/releases/download/v1/engine-cuda128-py313-1.zip
 .\.venv\Scripts\python.exe .\scripts\verify-resource-pack-manifest.py --strict
 ```
 

@@ -43,7 +43,7 @@ Bộ cài hiện không ký số. Windows có thể hiển thị nhà phát hàn
 
 ## Liên hệ hỗ trợ
 
-Tạo yêu cầu tại [GitHub Issues](https://github.com/MachHongHai/HaizFlow/issues), kèm:
+Tạo yêu cầu tại [GitHub Issues](https://github.com/NgocHoa08/HFL/issues), kèm:
 
 1. Phiên bản Trương Ngọc Hoà và Windows.
 2. Các bước thực hiện và tên công cụ/model.

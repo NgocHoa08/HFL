@@ -1,7 +1,7 @@
 # Official identity and brand — DRAFT
 
 **DRAFT — NOT IN FORCE.** Trương Ngọc Hoà was created by Mach Hong Hai. Official project
-links are https://github.com/MachHongHai/HaizFlow and https://truongngochoa.pages.dev/.
+links are https://github.com/NgocHoa08/HFL and https://truongngochoa.pages.dev/.
 
 Proposed policy: truthful references, reviews, tutorials and links may identify
 TruongNgocHoa. Do not use the name or logo to imply an unofficial installer,

@@ -81,7 +81,7 @@ Gemini, Zernio và các dịch vụ bên ngoài có điều khoản, hạn mức
 
 ## Cài đặt và bắt đầu
 
-**[Tải bộ cài Windows](https://github.com/MachHongHai/HaizFlow/releases/download/v1.0.1/HaizFlow-1.0.1-Setup.exe).** Chỉ mở file EXE này; không cần tải hoặc giải nén các tệp Core. Gói tài nguyên được cài trong TruongNgocHoa. Bản 1.0.0 có thể cập nhật trực tiếp trong app. [Thông tin phiên bản và cài đặt](https://github.com/MachHongHai/HaizFlow/releases/latest).
+**[Tải bộ cài Windows](https://github.com/NgocHoa08/HFL/releases/latest).** Chỉ mở file EXE này; không cần tải hoặc giải nén các tệp Core. Gói tài nguyên được cài trong TruongNgocHoa. Bản 1.0.0 có thể cập nhật trực tiếp trong app. [Thông tin phiên bản và cài đặt](https://github.com/NgocHoa08/HFL/releases/latest).
 
 1. Cài và mở TruongNgocHoa. Giao diện mặc định là tiếng Việt.
 2. Chọn CPU hoặc GPU NVIDIA trong **Cài đặt → Chung** và cài các gói cần dùng trong **Gói tài nguyên**.
@@ -102,11 +102,11 @@ Trương Ngọc Hoà miễn phí sử dụng theo [Trương Ngọc Hoà Source-A
 
 Bạn cần có quyền sử dụng video, nhạc và mẫu giọng được đưa vào ứng dụng. Xem [NOTICE](NOTICE) và [thông báo thành phần bên thứ ba](THIRD_PARTY_NOTICES.md). [Hồ sơ giấy phép](docs/licensing-review.md) và [dự thảo không có hiệu lực](legal/LICENSE-SOURCE-AVAILABLE-DRAFT.md) được lưu riêng.
 
-Ứng dụng dùng Qt/PySide theo LGPL và FFmpeg theo GPL/LGPL, tùy thành phần. [Nguồn thư viện đi kèm](https://github.com/MachHongHai/HaizFlow/releases/download/v1.0.0/HaizFlow-1.0.0-ThirdPartySources.zip) và [hướng dẫn thay thư viện](docs/third-party-library-replacement.md) được cung cấp riêng; quyền theo giấy phép của các thư viện vẫn được giữ nguyên.
+Ứng dụng dùng Qt/PySide theo LGPL và FFmpeg theo GPL/LGPL, tùy thành phần. [Nguồn thư viện đi kèm](https://github.com/NgocHoa08/HFL/releases/latest) và [hướng dẫn thay thư viện](docs/third-party-library-replacement.md) được cung cấp riêng; quyền theo giấy phép của các thư viện vẫn được giữ nguyên.
 
 ## Hỗ trợ và đóng góp
 
-Xem [Trợ giúp](docs/support.vi.md) để quản lý tài nguyên, API key và dữ liệu. Bạn cũng có thể [gửi góp ý hoặc yêu cầu hỗ trợ](https://github.com/MachHongHai/HaizFlow/issues). Không gửi API key hoặc dữ liệu riêng tư.
+Xem [Trợ giúp](docs/support.vi.md) để quản lý tài nguyên, API key và dữ liệu. Bạn cũng có thể [gửi góp ý hoặc yêu cầu hỗ trợ](https://github.com/NgocHoa08/HFL/issues). Không gửi API key hoặc dữ liệu riêng tư.
 
 Phần cài đặt từ mã nguồn, kiểm thử và đóng gói nằm trong [hướng dẫn phát triển](docs/development.vi.md). Xem [tài liệu kỹ thuật](docs/README.vi.md) nếu bạn muốn đóng góp mã.
 

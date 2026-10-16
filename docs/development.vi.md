@@ -16,7 +16,7 @@ Không cài dependency production tùy ý vào Python toàn cục. Repository d�
 ## 2. Clone và cài đặt
 
 ```powershell
-git clone https://github.com/MachHongHai/HaizFlow.git
+git clone https://github.com/NgocHoa08/HFL.git
 cd Trương Ngọc Hoà
 powershell -ExecutionPolicy Bypass -File .\scripts\install-desktop-env.ps1
 ```
@@ -180,7 +180,7 @@ Tài liệu user nói rõ thao tác, kết quả và cách phục hồi. Tài li
 - [ ] `scripts/test.ps1` đạt.
 - [ ] Không commit model, media, cache, credential hoặc build output.
 
-Mở issue tại [MachHongHai/TruongNgocHoa](https://github.com/MachHongHai/HaizFlow/issues) nếu cần thống nhất quyết định kiến trúc trước khi code.
+Mở issue tại [MachHongHai/TruongNgocHoa](https://github.com/NgocHoa08/HFL/issues) nếu cần thống nhất quyết định kiến trúc trước khi code.
 
 ## 16. Gói bộ xử lý độc lập
 
@@ -221,7 +221,7 @@ $env:TRUONGNGOCHOA_SIGN_CERT_PASSWORD = "<mật-khẩu-certificate>"
   -Profile cuda128 `
   -Version 1 `
   -SignCertificatePath C:\secure\truongngochoa-signing.pfx `
-  -ReleaseUrl https://github.com/MachHongHai/HaizFlow/releases/download/v1/engine-cuda128-py313-1.zip
+  -ReleaseUrl https://github.com/NgocHoa08/HFL/releases/download/v1/engine-cuda128-py313-1.zip
 .\.venv\Scripts\python.exe .\scripts\verify-resource-pack-manifest.py --strict
 ```
 

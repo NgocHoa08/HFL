@@ -17,10 +17,10 @@ class ExternalLinkTests(unittest.TestCase):
     @patch("truongngochoa.desktop.external_links.QDesktopServices.openUrl", return_value=True)
     def test_web_links_are_delegated_to_qt(self, qt_open):
         links = (
-            "https://github.com/MachHongHai/TruongNgocHoa",
-            "https://github.com/MachHongHai/TruongNgocHoa/releases/latest",
-            "https://github.com/MachHongHai/TruongNgocHoa/issues/new",
-            "https://github.com/MachHongHai/TruongNgocHoa/blob/main/docs/user-guide.vi.md",
+            "https://github.com/NgocHoa08/HFL",
+            "https://github.com/NgocHoa08/HFL/releases/latest",
+            "https://github.com/NgocHoa08/HFL/issues/new",
+            "https://github.com/NgocHoa08/HFL/blob/main/docs/user-guide.vi.md",
             "https://aistudio.google.com/apikey",
             "https://zernio.com/dashboard/api-keys",
             "http://example.com/guide?language=vi#install",
@@ -75,8 +75,8 @@ class ExternalLinkTests(unittest.TestCase):
             self.assertNotIn("Qt.openUrlExternally", path.read_text(encoding="utf-8"), str(path))
         menu = (QML / "AppMenuBar.qml").read_text(encoding="utf-8")
         for destination in (
-            "https://github.com/MachHongHai/TruongNgocHoa/blob/main/docs/user-guide.vi.md",
-            "https://github.com/MachHongHai/TruongNgocHoa/issues/new",
+            "https://github.com/NgocHoa08/HFL/blob/main/docs/user-guide.vi.md",
+            "https://github.com/NgocHoa08/HFL/issues/new",
         ):
             self.assertIn(f'AppController.openExternalUrl("{destination}")', menu)
         self.assertIn("AppController.openExternalUrl", (QML / "ExternalTextLink.qml").read_text(encoding="utf-8"))

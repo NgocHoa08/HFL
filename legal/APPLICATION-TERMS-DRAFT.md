@@ -4,7 +4,7 @@
 The current root `LICENSE` and independent component licenses remain in force.
 
 Trương Ngọc Hoà was created by Mach Hong Hai. Official downloads are linked from
-https://github.com/MachHongHai/HaizFlow/releases and https://truongngochoa.pages.dev/.
+https://github.com/NgocHoa08/HFL/releases and https://truongngochoa.pages.dev/.
 
 1. **Free use.** You may install and run an authorized release without payment
    to its developer, for personal or business use, including commercial video

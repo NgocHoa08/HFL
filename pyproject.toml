@@ -30,9 +30,9 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/MachHongHai/TruongNgocHoa"
-Repository = "https://github.com/MachHongHai/TruongNgocHoa"
-Issues = "https://github.com/MachHongHai/TruongNgocHoa/issues"
+Homepage = "https://github.com/NgocHoa08/HFL"
+Repository = "https://github.com/NgocHoa08/HFL"
+Issues = "https://github.com/NgocHoa08/HFL/issues"
 
 [project.optional-dependencies]
 douyin-browser = ["playwright==1.63.0"]

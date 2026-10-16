@@ -29,47 +29,14 @@ Các công cụ trong trình sửa Thủ công chạy độc lập: không bắt
 
 Xem trước video, chỉnh phụ đề và chọn giọng đọc phù hợp trước khi xuất hoặc đăng.
 
-## Hình ảnh giao diện
+## Tổng quan giao diện
 
-[Trang chủ](#trang-chủ) · [Xử lý tự động](#xử-lý-tự-động) · [Trình sửa thủ công](#trình-sửa-thủ-công) · [Tải xuống](#tải-xuống) · [Đăng mạng xã hội](#đăng-mạng-xã-hội) · [Cài đặt](#cài-đặt)
-
-Ảnh minh họa giao diện tiếng Việt; tùy chọn và số phiên bản có thể khác ở các bản mới. Bấm vào ảnh để xem kích thước đầy đủ.
-
-### Trang chủ
-
-Tìm dự án gần đây, lọc theo loại và tạo dự án mới.
-
-![Trang chủ Trương Ngọc Hoà với các thẻ dự án và bộ lọc tìm kiếm](docs/images/screenshots/home-2026-10-11.png)
-
-### Xử lý tự động
-
-Chọn model nhận dạng, dịch và giọng đọc; thiết lập che phụ đề, âm thanh, nhạc nền và watermark.
-
-![Trang xử lý tự động với video nguồn và các thiết lập ngôn ngữ, giọng đọc](docs/images/screenshots/automatic-2026-10-14.png)
-
-### Trình sửa thủ công
-
-So sánh video nguồn và kết quả, chạy từng bước độc lập, chia đoạn trên timeline Kết quả, nhập SRT và xuất phụ đề gốc hoặc đã dịch để dùng trong phần mềm khác.
-
-![Trình sửa thủ công với preview, bảng xử lý và timeline phụ đề, âm thanh](docs/images/screenshots/manual-editor-2026-10-14.png)
-
-### Tải xuống
-
-Kiểm tra liên kết video, kênh hoặc âm thanh, xem trước danh sách và chọn các video cần tải. Ảnh minh họa một kênh Douyin.
-
-![Trang tải xuống với phiên Douyin và danh sách video có thể chọn](docs/images/screenshots/downloads.png)
-
-### Đăng mạng xã hội
-
-Thêm video đã xử lý từ dự án vào hàng đợi và chuẩn bị bài đăng cho tài khoản đã kết nối qua Zernio.
-
-![Trang đăng mạng xã hội với tài khoản, hàng đợi bài đăng và hộp chọn video từ dự án](docs/images/screenshots/social-publishing.png)
-
-### Cài đặt
-
-Chọn ngôn ngữ giao diện và chế độ CPU/GPU. Các tab còn lại quản lý API key và gói tài nguyên.
-
-![Trang cài đặt với ngôn ngữ, bộ xử lý, giữ model sẵn sàng và kiểm tra cập nhật](docs/images/screenshots/settings.png)
+- **Trang chủ**: Tìm dự án gần đây, lọc theo phân loại và tạo dự án mới (đơn lẻ, thủ công hoặc hàng loạt).
+- **Xử lý tự động**: Chọn model nhận dạng, dịch và giọng đọc; thiết lập che phụ đề, âm thanh, nhạc nền và watermark.
+- **Trình sửa thủ công**: So sánh video nguồn và kết quả, chạy từng bước độc lập, chia đoạn trên timeline Kết quả, nhập SRT và xuất phụ đề gốc hoặc đã dịch để dùng trong các phần mềm khác.
+- **Tải xuống**: Kiểm tra liên kết video, kênh hoặc âm thanh, xem trước danh sách và tải hàng loạt (hỗ trợ Douyin).
+- **Đăng mạng xã hội**: Thêm video đã xử lý từ dự án vào hàng đợi và chuẩn bị bài đăng cho tài khoản đã kết nối qua Zernio.
+- **Cài đặt**: Chọn ngôn ngữ giao diện, chế độ CPU/GPU, quản lý API key và các gói tài nguyên AI.
 
 ## Dịch trên máy, không cần trả phí API theo lượt
 

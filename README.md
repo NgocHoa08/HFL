@@ -29,47 +29,14 @@ Manual tools run independently: dubbing is optional when you only need translate
 
 Preview the video, edit captions and choose suitable voices before exporting or publishing.
 
-## App screenshots
+## Application overview
 
-[Home](#home) · [Automatic processing](#automatic-processing) · [Manual editor](#manual-editor) · [Downloads](#downloads) · [Social publishing](#social-publishing) · [Settings](#settings)
-
-The screenshots show the Vietnamese interface. Options and version labels may differ in newer releases. Click an image to view it at full size.
-
-### Home
-
-Find recent projects, filter by project type and create a new project.
-
-![Trương Ngọc Hoà home page with project cards and search filters](docs/images/screenshots/home-2026-10-11.png)
-
-### Automatic processing
-
-Choose recognition, translation and voice models, then configure subtitle coverage, audio, background music and watermark settings.
-
-![Automatic processing page with source preview, language and voice settings](docs/images/screenshots/automatic-2026-10-14.png)
-
-### Manual editor
-
-Review source and result previews, run individual processing steps, split the Result timeline into clips, import SRT captions and export original or translated SRT for other editors.
-
-![Manual editor with video preview, processing panel and subtitle and audio timeline](docs/images/screenshots/manual-editor-2026-10-14.png)
-
-### Downloads
-
-Inspect a video, channel or audio link, review the channel's video list and select the items to download. This example shows a Douyin channel.
-
-![Downloads page showing a Douyin session and selectable channel videos](docs/images/screenshots/downloads.png)
-
-### Social publishing
-
-Add processed videos from existing projects to the publishing queue and prepare posts for your connected account through Zernio.
-
-![Social publishing page with an account, post queue and project video picker](docs/images/screenshots/social-publishing.png)
-
-### Settings
-
-Choose the interface language and CPU/GPU mode. The other tabs manage API keys and resource packs.
-
-![Settings page with language, processing device, warm-up and update controls](docs/images/screenshots/settings.png)
+- **Home**: Find recent projects, filter by project type, and create new single, manual, or batch projects.
+- **Automatic processing**: Choose speech recognition, translation, and voice models, then configure subtitle coverage, audio mixing, background music, and watermark settings.
+- **Manual editor**: Review source and result previews, run individual processing steps independently, split the Result timeline into clips, import SRT captions, and export original or translated SRT files.
+- **Downloads**: Inspect video, channel, or audio links, review channel video lists, and select items for batch downloading (including Douyin channels).
+- **Social publishing**: Queue processed videos from existing projects and publish directly to connected accounts via Zernio.
+- **Settings**: Manage interface language, GPU/CPU processing modes, API keys, and local AI resource packs.
 
 ## Local translation without per-call API charges
 

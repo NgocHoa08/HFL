@@ -1,0 +1,7 @@
+{
+  "architecture": "x64",
+  "core_layout": "versions",
+  "product": "HaizFlow",
+  "runtime_layout": "runtime",
+  "schema": 1
+}

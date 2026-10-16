@@ -1,69 +1,119 @@
-# Trương Ngọc Hoà — Giấy phép mã nguồn
+# TRƯƠNG NGỌC HOÀ — GIẤY PHÉP MÃ NGUỒN
+**Copyright (c) 2026 Trương Ngọc Hoà. All rights reserved.**
 
-Bản quyền phần sửa đổi do Trương Ngọc Hoà tạo ra (c) 2026 Trương Ngọc Hoà.
+## 1. Quyền sở hữu và phạm vi áp dụng
 
-## 1. Phạm vi áp dụng
+Trương Ngọc Hoà là tác giả và chủ sở hữu bản quyền đối với mã nguồn, tài liệu và các tài sản do Trương Ngọc Hoà tự phát triển trong dự án HFL, trong phạm vi các quyền hợp pháp thuộc sở hữu của mình.
 
-Văn bản này chỉ áp dụng cho các phần mã nguồn, tài liệu, hình ảnh hoặc tài sản khác do Trương Ngọc Hoà tự tạo và có quyền cấp phép trong bản sửa đổi/fork HaizFlow.
+Giấy phép này chỉ áp dụng cho những thành phần mà Trương Ngọc Hoà có quyền cấp phép. Các thành phần có nguồn gốc từ bên thứ ba vẫn chịu sự điều chỉnh của giấy phép và điều khoản tương ứng.
 
-Văn bản này KHÔNG thay thế hoặc hủy bỏ giấy phép, thông báo bản quyền hay điều khoản áp dụng cho mã nguồn gốc HaizFlow của Mạch Hồng Hải, hoặc cho thư viện, codec, model, checkpoint, font, icon và thành phần của bên thứ ba. Các điều khoản gốc tiếp tục áp dụng cho những thành phần đó, trừ khi chủ sở hữu quyền tương ứng cho phép khác bằng văn bản.
+## 2. Cấm sử dụng thương mại
 
-## 2. Cấp phép rộng rãi đối với phần sửa đổi của Trương Ngọc Hoà
+Nghiêm cấm mọi cá nhân hoặc tổ chức sử dụng các thành phần thuộc phạm vi giấy phép này cho mục đích thương mại nếu chưa có sự cho phép trước bằng văn bản của Trương Ngọc Hoà.
 
-Trong phạm vi quyền mà Trương Ngọc Hoà sở hữu hoặc được phép cấp lại, mọi cá nhân hoặc tổ chức được phép sử dụng, sao chép, sửa đổi, kết hợp, xuất bản, phân phối, cấp phép lại và/hoặc bán bản sao của phần sửa đổi đó; đồng thời được phép cho người nhận thực hiện các quyền tương tự.
+Các hành vi bị cấm bao gồm nhưng không giới hạn ở:
 
-Người sử dụng có thể sử dụng phần sửa đổi cho mục đích cá nhân, nội bộ, giáo dục hoặc thương mại. Việc sử dụng này không yêu cầu trả phí bản quyền cho Trương Ngọc Hoà.
+- Bán, cho thuê hoặc thu phí để cung cấp phần mềm hoặc các bản sao của phần mềm.
+- Tích hợp mã nguồn vào sản phẩm hoặc dịch vụ thương mại.
+- Cung cấp dịch vụ trả phí dựa trên mã nguồn hoặc các thành phần được cấp phép.
+- Phân phối, khai thác hoặc sử dụng mã nguồn nhằm tạo ra doanh thu trực tiếp hoặc gián tiếp.
+- Cung cấp quyền truy cập vào phần mềm dưới hình thức dịch vụ thương mại.
 
-## 3. Điều kiện
+## 3. Cấm sửa đổi và phân phối trái phép
 
-- Không được tuyên bố rằng Trương Ngọc Hoà là tác giả của mã nguồn gốc do người khác tạo ra.
-- Khi phân phối phần sửa đổi cùng mã nguồn gốc HaizFlow, phải giữ nguyên các thông báo bản quyền và tuân thủ giấy phép áp dụng cho mã nguồn gốc.
-- Các thành phần bên thứ ba vẫn chịu điều khoản riêng của chúng.
-- Người sử dụng tự chịu trách nhiệm bảo đảm có đủ quyền đối với nội dung, dữ liệu, giọng nói, nhạc, nhãn hiệu, model và tài sản mà họ sử dụng.
+Không được sửa đổi, tạo bản phái sinh, chuyển thể, tái cấu trúc hoặc phân phối phiên bản đã sửa đổi của các thành phần thuộc phạm vi giấy phép này nếu chưa có sự cho phép trước bằng văn bản của Trương Ngọc Hoà.
 
-## 4. Từ chối bảo đảm
+Không được xóa, thay đổi hoặc làm sai lệch thông báo bản quyền, thông tin tác giả hay thông tin giấy phép.
 
-Trong phạm vi pháp luật cho phép, phần sửa đổi do Trương Ngọc Hoà cấp phép được cung cấp “NGUYÊN TRẠNG”, không có bảo đảm rõ ràng hoặc ngụ ý, bao gồm bảo đảm về khả năng thương mại, sự phù hợp cho một mục đích cụ thể hoặc không vi phạm quyền của bên thứ ba. Điều khoản này không loại trừ trách nhiệm hoặc quyền mà pháp luật không cho phép loại trừ.
+Không được tuyên bố quyền sở hữu đối với mã nguồn do Trương Ngọc Hoà tạo ra.
 
-## 5. Ghi nhận nguồn gốc
+## 4. Các trường hợp sử dụng được phép
 
-Dự án gốc: HaizFlow  
-Tác giả/chủ thể được ghi nhận trong giấy phép gốc: Mạch Hồng Hải  
-Người thực hiện phần sửa đổi được cấp phép theo văn bản này: Trương Ngọc Hoà  
-Repository gốc được nêu trong tài liệu nguồn: https://github.com/MachHongHai/HaizFlow
+Người dùng có thể sử dụng phần mềm cho mục đích cá nhân, phi thương mại, nghiên cứu hoặc giáo dục, với điều kiện tuân thủ giấy phép này.
+
+Việc sao chép, sửa đổi, phân phối lại hoặc công bố các phiên bản phái sinh vẫn phải được Trương Ngọc Hoà cho phép trước bằng văn bản, trừ trường hợp pháp luật hiện hành có quy định khác.
+
+## 5. Thành phần bên thứ ba
+
+Giấy phép này không thay thế, hủy bỏ hoặc sửa đổi giấy phép của mã nguồn gốc HaizFlow hay bất kỳ thư viện, codec, mô hình AI, checkpoint, font chữ, biểu tượng hoặc tài sản bên thứ ba nào.
+
+Mọi quyền và hạn chế đối với những thành phần đó tiếp tục tuân theo giấy phép tương ứng. Việc sử dụng các thành phần này phải được thực hiện theo đúng điều khoản của chủ sở hữu quyền.
+
+## 6. Từ chối bảo đảm
+
+Phần mềm được cung cấp theo nguyên trạng (“AS IS”), trong phạm vi pháp luật cho phép, không có bất kỳ bảo đảm rõ ràng hoặc ngụ ý nào, bao gồm khả năng thương mại, sự phù hợp cho một mục đích cụ thể hoặc việc không xâm phạm quyền của bên thứ ba.
+
+Điều khoản này không loại trừ trách nhiệm hoặc quyền mà pháp luật không cho phép loại trừ.
+
+## 7. Xin phép sử dụng
+
+Mọi yêu cầu sử dụng thương mại, sửa đổi, tạo bản phái sinh hoặc phân phối lại ngoài phạm vi được cho phép phải được gửi đến Trương Ngọc Hoà và được chấp thuận bằng văn bản trước khi thực hiện.
+
+## 8. Thông tin bản quyền
+
+- **Tên dự án:** HFL
+- **Tác giả:** Trương Ngọc Hoà
+- **Chủ sở hữu bản quyền đối với phần tự phát triển:** Trương Ngọc Hoà, trong phạm vi quyền sở hữu hợp pháp
+- **Năm bản quyền:** 2026
+- **Repository:** https://github.com/NgocHoa08/HFL.git
 
 ---
 
-# Truong Ngoc Hoa — Source License
+# TRUONG NGOC HOA — SOURCE CODE LICENSE
+**Copyright (c) 2026 Truong Ngoc Hoa. All rights reserved.**
 
-Copyright (c) 2026 Truong Ngoc Hoa for modifications authored by Truong Ngoc Hoa.
+## 1. Ownership and Scope
 
-## 1. Scope
+Truong Ngoc Hoa is the author and copyright holder of the source code, documentation, and other materials independently developed by Truong Ngoc Hoa for the HFL project, to the extent of the rights legally owned by Truong Ngoc Hoa.
 
-This license applies only to source code, documentation, images, or other material independently created by Truong Ngoc Hoa and which Truong Ngoc Hoa has the right to license in a modified version or fork of HaizFlow.
+This license applies only to materials that Truong Ngoc Hoa is legally entitled to license. Third-party components remain subject to their respective licenses and terms.
 
-This license does NOT replace or cancel the original HaizFlow license, copyright notices, or terms applicable to work by Mach Hong Hai, nor the separate terms for third-party libraries, codecs, models, checkpoints, fonts, icons, or other assets. Those terms continue to apply unless the relevant rights holder grants different permission in writing.
+## 2. Prohibition of Commercial Use
 
-## 2. Broad permission for Truong Ngoc Hoa's modifications
+Commercial use of materials covered by this license is strictly prohibited without prior written permission from Truong Ngoc Hoa.
 
-To the extent that Truong Ngoc Hoa owns or is authorized to license the relevant material, any person or organization is permitted to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of those modifications, and to permit recipients to do the same.
+Prohibited activities include, but are not limited to:
 
-The modifications may be used for personal, internal, educational, or commercial purposes without paying a royalty to Truong Ngoc Hoa.
+- Selling, renting, or charging fees for the software or copies of it.
+- Incorporating the covered materials into commercial products or services.
+- Providing paid services based on the covered source code or components.
+- Distributing or exploiting the covered materials for direct or indirect commercial gain.
+- Offering access to the software as a commercial service.
 
-## 3. Conditions
+## 3. Prohibition of Unauthorized Modification and Redistribution
 
-- Do not claim that Truong Ngoc Hoa authored original code created by someone else.
-- When distributing modifications together with original HaizFlow code, retain the original copyright notices and comply with the license governing that original code.
-- Third-party components remain subject to their own terms.
-- Users are responsible for obtaining the necessary rights to any media, data, voices, music, trademarks, models, or other assets they use.
+No person or organization may modify, create derivative works of, adapt, restructure, or redistribute modified versions of materials covered by this license without prior written permission from Truong Ngoc Hoa.
 
-## 4. Disclaimer
+Copyright notices, author attribution, and license information must not be removed, altered, or misrepresented.
 
-To the extent permitted by law, modifications licensed by Truong Ngoc Hoa are provided “AS IS”, without express or implied warranties, including merchantability, fitness for a particular purpose, or non-infringement. Nothing in this disclaimer excludes liability or rights that cannot lawfully be excluded.
+No person may falsely claim authorship or ownership of source code created by Truong Ngoc Hoa.
 
-## 5. Attribution
+## 4. Permitted Use
 
-Original project: HaizFlow  
-Author/rights holder identified in the original license: Mach Hong Hai  
-Contributor licensing their own modifications under this document: Truong Ngoc Hoa  
-Original repository identified in the source document: https://github.com/MachHongHai/HaizFlow
+The software may be used for personal, non-commercial, research, or educational purposes, subject to this license.
+
+Copying, modifying, redistributing, or publishing derivative versions requires prior written permission from Truong Ngoc Hoa, except where applicable law provides otherwise.
+
+## 5. Third-Party Components
+
+This license does not replace, cancel, or modify the license applicable to the original HaizFlow source code or any third-party libraries, codecs, AI models, checkpoints, fonts, icons, or other assets.
+
+All such components remain subject to their respective licenses. Users must comply with the terms imposed by the relevant rights holders.
+
+## 6. Disclaimer of Warranty
+
+The software is provided “AS IS,” to the maximum extent permitted by law, without warranties of any kind, express or implied, including merchantability, fitness for a particular purpose, or non-infringement.
+
+Nothing in this disclaimer excludes liability or rights that cannot lawfully be excluded.
+
+## 7. Permission Requests
+
+Any request for commercial use, modification, creation of derivative works, or redistribution outside the permissions granted by this license must be submitted to Truong Ngoc Hoa and approved in writing before the relevant activity takes place.
+
+## 8. Copyright Information
+
+- **Project:** HFL
+- **Author:** Truong Ngoc Hoa
+- **Copyright holder for independently developed materials:** Truong Ngoc Hoa, to the extent of legally owned rights
+- **Copyright year:** 2026
+- **Repository:** https://github.com/NgocHoa08/HFL.git

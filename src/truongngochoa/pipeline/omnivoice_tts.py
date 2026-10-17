@@ -906,8 +906,14 @@ def _encode_mp3(wav_path: Path, output_path: Path, video_id: str) -> None:
     )
     if process.returncode != 0 or not temporary_output.is_file() or temporary_output.stat().st_size <= 0:
         temporary_output.unlink(missing_ok=True)
-        raise RuntimeError((stderr or "FFmpeg could not encode OmniVoice audio.").strip()[:500])
-    os.replace(temporary_output, output_path)
+    for _attempt in range(5):
+        try:
+            os.replace(temporary_output, output_path)
+            break
+        except PermissionError:
+            if _attempt == 4:
+                raise
+            time.sleep(0.3)
 
 
 def _preset_reference(voice: str, language: str) -> tuple[str, str]:

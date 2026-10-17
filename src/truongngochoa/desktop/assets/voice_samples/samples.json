@@ -897,11 +897,11 @@
       "gender": "male",
       "region": "Bắc",
       "path": "vieneu/vieneu_Hai_Dang/vi.mp3",
-      "duration": 14.08,
-      "peak": 0.7644,
-      "rms": 0.1062,
-      "bytes": 156573,
-      "sha256": "6480df1b0cde1af3467b7a5d26e809dc6c0c094ae90c1ba0af5d431a1eaacf3e"
+      "duration": 6.64,
+      "peak": 0.8314,
+      "rms": 0.1011,
+      "bytes": 80132,
+      "sha256": "be608e96902d1ace8b3892508399009ecc61124c93007b1abafa60e8a6415dd6"
     },
     {
       "provider": "vieneu",
@@ -911,11 +911,11 @@
       "gender": "female",
       "region": "Bắc",
       "path": "vieneu/vieneu_Truc_Ly/vi.mp3",
-      "duration": 14.01,
-      "peak": 0.7405,
-      "rms": 0.1031,
-      "bytes": 146949,
-      "sha256": "7aec39df45d406c66c76d316a1ca5e5c07080b66f38cc3233b99590dee5b8946"
+      "duration": 6.16,
+      "peak": 0.6205,
+      "rms": 0.0969,
+      "bytes": 66356,
+      "sha256": "82d71c5c3c9622bf2060550c0d44d4774abc4f84653d653c1c5fbb2f6e70ca96"
     },
     {
       "provider": "vieneu",
@@ -925,11 +925,11 @@
       "gender": "male",
       "region": "Bắc",
       "path": "vieneu/vieneu_Thien_Minh/vi.mp3",
-      "duration": 15.67,
-      "peak": 0.777,
-      "rms": 0.1111,
-      "bytes": 188541,
-      "sha256": "8e996b286255f200dcfb7d99555c74a43079a8e2b2b8f47f7482ebccee720ec8"
+      "duration": 6.56,
+      "peak": 0.6891,
+      "rms": 0.1079,
+      "bytes": 83444,
+      "sha256": "83a35537ecb6db5dd448d91e37bf5b39f4a1c43fb7ae603446239760158f5a61"
     },
     {
       "provider": "vieneu",
@@ -939,11 +939,11 @@
       "gender": "female",
       "region": "Bắc",
       "path": "vieneu/vieneu_Mai_Anh/vi.mp3",
-      "duration": 17.31,
-      "peak": 0.6769,
-      "rms": 0.1056,
-      "bytes": 181317,
-      "sha256": "42a51d9742bd220099ca02cce3bf91d1341d901267a76e891870f5c8aa64120c"
+      "duration": 7.6,
+      "peak": 0.6821,
+      "rms": 0.1016,
+      "bytes": 82244,
+      "sha256": "7e2585bfea24128d0ad28e4bf622ae1908109e076677feac8b086994669e59e0"
     },
     {
       "provider": "vieneu",
@@ -953,11 +953,11 @@
       "gender": "female",
       "region": "Nam",
       "path": "vieneu/vieneu_Thuy_Dung/vi.mp3",
-      "duration": 13.91,
-      "peak": 0.6765,
-      "rms": 0.1004,
-      "bytes": 140229,
-      "sha256": "55ecf5ac9211363af91e736bb8b68d91aad98aa2325d344f5cd7ad1355ccb688"
+      "duration": 6.24,
+      "peak": 0.6457,
+      "rms": 0.0983,
+      "bytes": 64484,
+      "sha256": "3bf679aa4bea71884c957318c3a6c739cab6662fc122b1c78bbb251c0d02404f"
     },
     {
       "provider": "vieneu",
@@ -967,11 +967,11 @@
       "gender": "male",
       "region": "Bắc",
       "path": "vieneu/vieneu_Thien_Tam_Duc/vi.mp3",
-      "duration": 20.85,
-      "peak": 0.8526,
-      "rms": 0.1166,
-      "bytes": 206445,
-      "sha256": "1919a9b3bac4063e5063460e9053c6143d346edb6496d8b9a81d31a5d3291483"
+      "duration": 9.44,
+      "peak": 0.8246,
+      "rms": 0.1141,
+      "bytes": 92012,
+      "sha256": "b6c6df7b75e7fc34b31686e846e108d0798fee9b4397533133ba0dbe524bf665"
     },
     {
       "provider": "vieneu",
@@ -981,11 +981,11 @@
       "gender": "female",
       "region": "Bắc",
       "path": "vieneu/vieneu_Ngoc_Huyen/vi.mp3",
-      "duration": 15.65,
-      "peak": 0.551,
-      "rms": 0.11,
-      "bytes": 158805,
-      "sha256": "7430fa9e1b2aece1d685d78601b11486c4aac4143bfcfb5bbaaf8269b627050f"
+      "duration": 6.88,
+      "peak": 0.5247,
+      "rms": 0.1061,
+      "bytes": 70652,
+      "sha256": "b0f39ff08e1fa8253db8663db3d01aa26234491f38f75917638e259a797af679"
     },
     {
       "provider": "vieneu",
@@ -995,11 +995,11 @@
       "gender": "male",
       "region": "Trung",
       "path": "vieneu/vieneu_Quang_Son/vi.mp3",
-      "duration": 18.06,
-      "peak": 0.8862,
-      "rms": 0.0936,
-      "bytes": 166581,
-      "sha256": "55abd83f7807ad92438b87b9696948e9788905f872a9c8a4c9f30c78b93bd386"
+      "duration": 8.08,
+      "peak": 0.704,
+      "rms": 0.0996,
+      "bytes": 74540,
+      "sha256": "8202ba6399291f59fa8c6ae94db344afa5bde1d66b576fc183fbf01d1f84256b"
     },
     {
       "provider": "vieneu",
@@ -1009,11 +1009,11 @@
       "gender": "female",
       "region": "Trung",
       "path": "vieneu/vieneu_Ngoc_Tran/vi.mp3",
-      "duration": 17.61,
-      "peak": 0.574,
-      "rms": 0.1061,
-      "bytes": 160917,
-      "sha256": "ae7c152970ab42f23e20d0f162575cbad8a98b9e000b6cad1c921bd1e6c79813"
+      "duration": 8.24,
+      "peak": 0.5842,
+      "rms": 0.1141,
+      "bytes": 76628,
+      "sha256": "75cfef2a7d3d7c2e9f10baebd72780eba9bba12ea500102062520fc8fef4a6ab"
     },
     {
       "provider": "vieneu",
@@ -1023,11 +1023,11 @@
       "gender": "male",
       "region": "Bắc",
       "path": "vieneu/vieneu_Minh_Duc/vi.mp3",
-      "duration": 18.4,
-      "peak": 0.5749,
-      "rms": 0.1078,
-      "bytes": 176157,
-      "sha256": "eb0c830b1d44f64162d337176b493f22518154b972df5778824de1cfa1236467"
+      "duration": 8.96,
+      "peak": 0.5379,
+      "rms": 0.0999,
+      "bytes": 90188,
+      "sha256": "7ce15254ea7a4b162b2df5a8e16b8531e09465479bbc53aa6ebc4b0d8acf7d87"
     },
     {
       "provider": "vieneu",
@@ -1037,11 +1037,11 @@
       "gender": "male",
       "region": "Bắc",
       "path": "vieneu/vieneu_Pham_Tuyen/vi.mp3",
-      "duration": 14.88,
-      "peak": 0.8889,
-      "rms": 0.0942,
-      "bytes": 156645,
-      "sha256": "6c8cb6d340e9117c6ca41b85df6275538d78be0d0756d048b969505ccc9bca6a"
+      "duration": 7.12,
+      "peak": 0.7539,
+      "rms": 0.1024,
+      "bytes": 74420,
+      "sha256": "5e11de8134f2c6e64d14da0a2f305ca565cdb2abf354c02dd983d6eebd43ffe3"
     },
     {
       "provider": "vieneu",
@@ -1051,11 +1051,11 @@
       "gender": "male",
       "region": "Nam",
       "path": "vieneu/vieneu_Thai_Son/vi.mp3",
-      "duration": 17.74,
-      "peak": 0.812,
-      "rms": 0.1057,
-      "bytes": 200685,
-      "sha256": "2afabb1548d5a64d1e7c9a5f1e65dd662f4eae7410769fb7ed99f7cdaf45d561"
+      "duration": 8.08,
+      "peak": 0.7479,
+      "rms": 0.1073,
+      "bytes": 95564,
+      "sha256": "9c12241836749236972ee7ad4558cc7ed31176c55ba52443727ed11a7d768d6e"
     },
     {
       "provider": "vieneu",
@@ -1065,11 +1065,11 @@
       "gender": "male",
       "region": "Bắc",
       "path": "vieneu/vieneu_Xuan_Vinh/vi.mp3",
-      "duration": 15.38,
-      "peak": 0.7668,
-      "rms": 0.1102,
-      "bytes": 174573,
-      "sha256": "1f0e62c4abc5127a4371a86cf24a45dc7234da64ae302b8d4458095a2fdb5f64"
+      "duration": 6.88,
+      "peak": 0.8201,
+      "rms": 0.1062,
+      "bytes": 78572,
+      "sha256": "5321c2ffdff7eea0be63671f625b3320b7c798408c5df41eec35a057d264bd03"
     },
     {
       "provider": "vieneu",
@@ -1079,11 +1079,11 @@
       "gender": "male",
       "region": "Bắc",
       "path": "vieneu/vieneu_Thanh_Binh/vi.mp3",
-      "duration": 14.74,
-      "peak": 0.7322,
-      "rms": 0.102,
-      "bytes": 175461,
-      "sha256": "d07c7bce079ab4cc9e212f3576940c0c97dffdaa79c1770d9e87b66a78bb5820"
+      "duration": 6.48,
+      "peak": 0.6906,
+      "rms": 0.101,
+      "bytes": 76412,
+      "sha256": "8661ea0643d10f823d80cd0bd70d71e81eae7e6805ebea872052bf0dc517145e"
     },
     {
       "provider": "vieneu",
@@ -1093,11 +1093,11 @@
       "gender": "female",
       "region": "Bắc",
       "path": "vieneu/vieneu_Ngoc_Linh/vi.mp3",
-      "duration": 15.5,
-      "peak": 0.8611,
-      "rms": 0.1176,
-      "bytes": 153789,
-      "sha256": "100f37575f6e116b5cb076afb487f8d3ffc4deb047defeb59d87b1fa87e9ce08"
+      "duration": 6.88,
+      "peak": 0.6636,
+      "rms": 0.1127,
+      "bytes": 70820,
+      "sha256": "79f1978540dcfb6403e3b96703413d6399234ca9f2710a1b2760415d0e7fe7cf"
     },
     {
       "provider": "vieneu",
@@ -1107,11 +1107,11 @@
       "gender": "female",
       "region": "Bắc",
       "path": "vieneu/vieneu_Doan_Trang/vi.mp3",
-      "duration": 16.47,
-      "peak": 0.5586,
-      "rms": 0.1047,
-      "bytes": 150861,
-      "sha256": "7952f089ef99d17d3a4881b15788c713ac0e78f95d90061f42d6023cd0a3cf7d"
+      "duration": 7.44,
+      "peak": 0.6309,
+      "rms": 0.1043,
+      "bytes": 69980,
+      "sha256": "e403479252a931d887d112b19fee39bc952b1756bd18636935d3546cb7660c32"
     },
     {
       "provider": "vieneu",
@@ -1121,11 +1121,11 @@
       "gender": "female",
       "region": "Nam",
       "path": "vieneu/vieneu_Thuc_Doan/vi.mp3",
-      "duration": 17.67,
-      "peak": 0.7403,
-      "rms": 0.1018,
-      "bytes": 184893,
-      "sha256": "89226810518ef2145cf1475c92503ead3335b4f66ecc913e8639f6494d0fc42c"
+      "duration": 8.08,
+      "peak": 0.6736,
+      "rms": 0.1048,
+      "bytes": 85244,
+      "sha256": "8aa08bf5cf3e501cd17149387ad76b1b368b16bb061e485a92cec2de85ae0e59"
     },
     {
       "provider": "vieneu",
@@ -1135,11 +1135,11 @@
       "gender": "male",
       "region": "Nam",
       "path": "vieneu/vieneu_Minh_Triet/vi.mp3",
-      "duration": 14.46,
-      "peak": 0.8695,
-      "rms": 0.1022,
-      "bytes": 146685,
-      "sha256": "b9994b75dd96ba28d73c770b11f7869581bfb1aeecca7a29ab6f2f359765d031"
+      "duration": 6.88,
+      "peak": 0.8876,
+      "rms": 0.1038,
+      "bytes": 73004,
+      "sha256": "5b8b33bf6f0f2e13183fe9a5a22494ba985740c45fed5d0d4b777ba3ac513b3f"
     },
     {
       "provider": "vieneu",
@@ -1149,11 +1149,11 @@
       "gender": "female",
       "region": "Nam",
       "path": "vieneu/vieneu_My_Duyen/vi.mp3",
-      "duration": 19.91,
-      "peak": 0.7147,
-      "rms": 0.1068,
-      "bytes": 212565,
-      "sha256": "8e26df720517292bc935844782893a4b55af4319783a4649443d950dacde7a3b"
+      "duration": 8.8,
+      "peak": 0.6387,
+      "rms": 0.108,
+      "bytes": 96836,
+      "sha256": "ba69a88101fa28922890425cacb40c375a729585d69a83df29c93b26cb3992ac"
     },
     {
       "provider": "vieneu",
@@ -1163,11 +1163,11 @@
       "gender": "female",
       "region": "Bắc",
       "path": "vieneu/vieneu_Quynh_Anh/vi.mp3",
-      "duration": 16.74,
-      "peak": 0.7426,
-      "rms": 0.1008,
-      "bytes": 178197,
-      "sha256": "eaa9142664bb606aa70c3beba38f1dc8bd91af785381efc32ba9265697f590ed"
+      "duration": 7.36,
+      "peak": 0.7711,
+      "rms": 0.1005,
+      "bytes": 79364,
+      "sha256": "6c4bd969571c464af8e7fb587de2929c27aa2ff48ddc8858d2b162f03fc60dc6"
     },
     {
       "provider": "vieneu",
@@ -1177,11 +1177,11 @@
       "gender": "male",
       "region": "Nam",
       "path": "vieneu/vieneu_Duc_Tri/vi.mp3",
-      "duration": 21.36,
-      "peak": 0.6631,
-      "rms": 0.1076,
-      "bytes": 245805,
-      "sha256": "56d2cf58315c7ed04eb77723b5e679e753cec2b0055dd4ef0d087e316649e0dc"
+      "duration": 10.24,
+      "peak": 0.6898,
+      "rms": 0.0961,
+      "bytes": 120524,
+      "sha256": "e0a3e9bff9d5a3e54cd2f02cfad701875db789f7f685748f8da8c2bedbb6007e"
     },
     {
       "provider": "vieneu",
@@ -1191,11 +1191,11 @@
       "gender": "female",
       "region": "Nam",
       "path": "vieneu/vieneu_Kim_Thanh/vi.mp3",
-      "duration": 22.3,
-      "peak": 0.7641,
-      "rms": 0.0987,
-      "bytes": 237237,
-      "sha256": "15f6f570f6fab10139746db38bb6cdbe45c00fd7b79364b29bbca42153a16374"
+      "duration": 10.16,
+      "peak": 0.7125,
+      "rms": 0.1027,
+      "bytes": 106244,
+      "sha256": "d5ea4ae16b7d11de2f9bf95d9ff6ae9b05d15dd66798afcc95a8c1c6892f58e4"
     },
     {
       "provider": "vieneu",
@@ -1205,11 +1205,11 @@
       "gender": "male",
       "region": "Nam",
       "path": "vieneu/vieneu_Adam/vi.mp3",
-      "duration": 15.23,
-      "peak": 0.776,
-      "rms": 0.1035,
-      "bytes": 200037,
-      "sha256": "5136be74ce4e017944fa204ba6351c9d435d4074fac9024428a464e7e0561c7d"
+      "duration": 6.72,
+      "peak": 0.7502,
+      "rms": 0.1054,
+      "bytes": 92492,
+      "sha256": "27bc334103a3f794430ba24209867b045d8b352fe0ead8a2ad75d6c11738517e"
     },
     {
       "provider": "vieneu",
@@ -1219,11 +1219,11 @@
       "gender": "male",
       "region": "Bắc",
       "path": "vieneu/vieneu_Quoc_Tuan/vi.mp3",
-      "duration": 15.44,
-      "peak": 0.7201,
-      "rms": 0.1095,
-      "bytes": 174525,
-      "sha256": "1e1ef7dc26a4257ca2f479d888c28b2924b82fc6b0dc8dbaec5749022100bc10"
+      "duration": 6.4,
+      "peak": 0.7479,
+      "rms": 0.1084,
+      "bytes": 74660,
+      "sha256": "819a646d3cb6ce7cdcd472ef60d60bacad9bc00aed1ed4067cdb6bb89dc0b208"
     },
     {
       "provider": "vieneu",
@@ -1233,11 +1233,11 @@
       "gender": "male",
       "region": "Bắc",
       "path": "vieneu/vieneu_Adam_bua/vi.mp3",
-      "duration": 17.31,
-      "peak": 0.8901,
-      "rms": 0.0906,
-      "bytes": 196989,
-      "sha256": "ad35e81c5d4fce1d99fb9d28d67a7d289e716e71c486c966bffeeb8a0f957dbf"
+      "duration": 7.04,
+      "peak": 0.8121,
+      "rms": 0.1048,
+      "bytes": 84980,
+      "sha256": "f3bb0613bd488900af56ad73d5a5481745597f142e67a8a02b8a82ebaccc0267"
     }
   ]
 }

@@ -1,7 +1,7 @@
 """Generate local, sentence-locked VieNeu previews; never read user projects.
 
-Only MP3 assets are generated. Catalog metadata is printed for review instead
-of rewriting samples.json or changing existing OmniVoice/Edge previews.
+Only MP3 assets are generated. Catalog metadata is printed for review and
+updated in samples.json for the VieNeu provider.
 """
 
 from __future__ import annotations
@@ -24,7 +24,7 @@ def sample_details(path: Path) -> dict:
     from truongngochoa.utils.ffmpeg import _binary, get_video_duration
 
     duration = get_video_duration(str(path)) if path.is_file() else 0
-    if not 8 <= duration <= 120:
+    if not 5 <= duration <= 120:
         raise RuntimeError(f"Invalid preview duration: {path} ({duration:.3f}s)")
     decoded = subprocess.run(
         [_binary("ffmpeg"), "-v", "error", "-xerror", "-i", str(path),
@@ -44,6 +44,9 @@ def sample_details(path: Path) -> dict:
 
 
 def main() -> int:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--models-root", type=Path, required=True, help="Existing verified model packs")
     parser.add_argument("--device", choices=("cpu", "gpu"), default="cpu")
@@ -54,8 +57,7 @@ def main() -> int:
     sys.path.insert(0, str(ROOT / "src"))
     (ROOT / "build").mkdir(exist_ok=True)
     with tempfile.TemporaryDirectory(prefix="vieneu-samples-", dir=ROOT / "build") as temporary:
-        os.environ.update(TRUONGNGOCHOA_SMOKE_TEST="1", TRUONGNGOCHOA_HOME=temporary,
-                          RUNTIME_DATA_DIR=str(Path(temporary) / "data"), MODELS_DIR=str(args.models_root.resolve()),
+        os.environ.update(TRUONGNGOCHOA_SMOKE_TEST="1", MODELS_DIR=str(args.models_root.resolve()),
                           HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1")
         from truongngochoa import config
 
@@ -78,19 +80,42 @@ def main() -> int:
             valid = False
             if path.is_file() and not args.force:
                 try:
-                    sample_details(path)
-                    valid = True
+                    details = sample_details(path)
+                    if details["duration"] < 10.0:
+                        valid = True
                 except RuntimeError:
                     pass
             if not valid:
                 requests.append(dict(text=manifest["sentences"]["vi"], voice=voice, output_path=str(path)))
-        if requests:
-            synthesize_batch_to_mp3(requests, "vieneu-packaged-sample", language_id="vi", device=args.device,
-                                    progress_callback=lambda done, total, stage:
-                                    print(f"[{done}/{total}] {stage}", flush=True))
+
+        for index, req in enumerate(requests, 1):
+            voice_name = req["voice"]
+            out_p = Path(req["output_path"])
+            print(f"[{index}/{len(requests)}] Synthesizing {voice_name}...", flush=True)
+            for attempt in range(3):
+                try:
+                    variation = req["text"] if attempt == 0 else (req["text"] + " ")
+                    synthesize_batch_to_mp3(
+                        [dict(text=variation, voice=voice_name, output_path=str(out_p))],
+                        "vieneu-packaged-sample",
+                        language_id="vi",
+                        device=args.device,
+                    )
+                    sample_details(out_p)
+                    print(f"[{index}/{len(requests)}] {voice_name} completed successfully.", flush=True)
+                    break
+                except Exception as exc:
+                    print(f"[{index}/{len(requests)}] {voice_name} attempt {attempt+1} error: {exc}", flush=True)
+                    if attempt == 2:
+                        raise
+
+        updated_vieneu = []
         for entry in entries:
             details = sample_details(samples / entry["path"])
+            updated_vieneu.append({**entry, **details})
             print(json.dumps({**entry, **details}, ensure_ascii=False), flush=True)
+        manifest["samples"] = [s for s in manifest["samples"] if s.get("provider") != "vieneu"] + updated_vieneu
+        (samples / "samples.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return 0
 
 

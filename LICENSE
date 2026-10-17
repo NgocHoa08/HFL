@@ -35,7 +35,7 @@ Việc sao chép, sửa đổi, phân phối lại hoặc công bố các phiên
 
 ## 5. Thành phần bên thứ ba
 
-Giấy phép này không thay thế, hủy bỏ hoặc sửa đổi giấy phép của mã nguồn gốc HaizFlow hay bất kỳ thư viện, codec, mô hình AI, checkpoint, font chữ, biểu tượng hoặc tài sản bên thứ ba nào.
+Giấy phép này không thay thế, hủy bỏ hoặc sửa đổi giấy phép của mã nguồn gốc HFL hay bất kỳ thư viện, codec, mô hình AI, checkpoint, font chữ, biểu tượng hoặc tài sản bên thứ ba nào.
 
 Mọi quyền và hạn chế đối với những thành phần đó tiếp tục tuân theo giấy phép tương ứng. Việc sử dụng các thành phần này phải được thực hiện theo đúng điều khoản của chủ sở hữu quyền.
 
@@ -96,7 +96,7 @@ Copying, modifying, redistributing, or publishing derivative versions requires p
 
 ## 5. Third-Party Components
 
-This license does not replace, cancel, or modify the license applicable to the original HaizFlow source code or any third-party libraries, codecs, AI models, checkpoints, fonts, icons, or other assets.
+This license does not replace, cancel, or modify the license applicable to the original HFL source code or any third-party libraries, codecs, AI models, checkpoints, fonts, icons, or other assets.
 
 All such components remain subject to their respective licenses. Users must comply with the terms imposed by the relevant rights holders.
 

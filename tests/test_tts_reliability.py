@@ -48,7 +48,7 @@ class TtsReliabilityTests(unittest.TestCase):
         from truongngochoa.pipeline.omnivoice_tts import _preset_reference
         path, text = _preset_reference("omnivoice:male", "en")
         self.assertTrue(Path(path).is_file())
-        self.assertIn("Mạch Hồng Hải", text)
+        self.assertIn("Truong Ngoc Hoa", text)
         self.assertEqual(_preset_reference("../untrusted", "en"), ("", ""))
 
     def test_completed_clips_are_committed_before_worker_pause(self):

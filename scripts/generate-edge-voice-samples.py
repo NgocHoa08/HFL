@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--live", action="store_true", help="Send the public sample sentences to Edge TTS")
+    parser.add_argument("--force", action="store_true", help="Force regeneration of existing samples")
     args = parser.parse_args()
     if not args.live:
         parser.error("Pass --live to enable sample synthesis")
@@ -32,7 +33,7 @@ def main():
         for language, voices in EDGE_VOICES.items():
             for voice, *_labels in voices:
                 path = samples / "edge" / voice / f"{language}.mp3"
-                if not valid_audio(str(path)):
+                if args.force or not valid_audio(str(path)):
                     synthesize_to_mp3(manifest["sentences"][language], voice, str(path),
                                       "edge-packaged-sample", language_id=language)
                 if not valid_audio(str(path)):

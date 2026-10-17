@@ -12,13 +12,10 @@ AppDialog {
     subtitle: qsTr("Khóa thiết bị phần cứng & Kiểm soát số lượt sử dụng")
     preferredWidth: 640
     maximumWidth: 680
-    maximumHeight: 680
+    maximumHeight: 560
     bodySpacing: Theme.space12
 
     property var license: AppController.license
-    property bool adminUnlocked: false
-    property int adminClickCount: 0
-    property bool showServerConfig: false
 
     ScrollView {
         id: scroll
@@ -61,19 +58,6 @@ AppDialog {
                             font.pixelSize: TypeScale.control
                             font.weight: Font.DemiBold
                             color: Theme.text
-
-                            MouseArea {
-                                anchors.fill: parent
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    root.adminClickCount += 1;
-                                    if (root.adminClickCount >= 5) {
-                                        root.adminUnlocked = true;
-                                        root.showServerConfig = true;
-                                        AppController.appAlertRequested("Quản trị viên", "Đã mở khóa cấu hình máy chủ.", "info");
-                                    }
-                                }
-                            }
                         }
 
                         Item { Layout.fillWidth: true }
@@ -314,98 +298,6 @@ AppDialog {
                         onClicked: {
                             if (root.license) {
                                 root.license.activate(keyInputField.text.trim());
-                            }
-                        }
-                    }
-                }
-            }
-
-            Rectangle {
-                Layout.fillWidth: true
-                Layout.preferredHeight: 1
-                color: Theme.divider
-                visible: root.adminUnlocked
-            }
-
-            // 4. COLLAPSIBLE SERVER CONFIG (CẤU HÌNH MÁY CHỦ CHO CHỦ PHẦN MỀM)
-            ColumnLayout {
-                Layout.fillWidth: true
-                spacing: Theme.space8
-                visible: root.adminUnlocked
-
-                RowLayout {
-                    Layout.fillWidth: true
-
-                    StudioButton {
-                        text: root.showServerConfig ? qsTr("▲ Thu gọn cấu hình máy chủ") : qsTr("▼ Cấu hình máy chủ Supabase (Dành cho người phân phối)")
-                        variant: "ghost"
-                        onClicked: root.showServerConfig = !root.showServerConfig
-                    }
-
-                    Item { Layout.fillWidth: true }
-
-                    Text {
-                        text: root.license && root.license.serverConfigured ? qsTr("● Máy chủ đã kết nối") : qsTr("○ Chưa thiết lập máy chủ")
-                        font.family: Theme.fontFamily
-                        font.pixelSize: TypeScale.meta
-                        color: root.license && root.license.serverConfigured ? Theme.success : Theme.textSubtle
-                    }
-                }
-
-                ColumnLayout {
-                    Layout.fillWidth: true
-                    spacing: Theme.space8
-                    visible: root.showServerConfig
-
-                    Text {
-                        Layout.fillWidth: true
-                        text: qsTr("Dành cho chủ phần mềm (Trương Ngọc Hoà) để kết nối cơ sở dữ liệu Supabase miễn phí. Khách hàng thông thường không cần sửa phần này.")
-                        font.family: Theme.fontFamily
-                        font.pixelSize: TypeScale.meta
-                        color: Theme.textMuted
-                        wrapMode: Text.WordWrap
-                    }
-
-                    Text {
-                        text: qsTr("Supabase Project URL:")
-                        font.family: Theme.fontFamily
-                        font.pixelSize: TypeScale.label
-                        color: Theme.textMuted
-                    }
-                    AppTextField {
-                        id: serverUrlField
-                        Layout.fillWidth: true
-                        placeholderText: "https://your-project-id.supabase.co"
-                        text: root.license ? root.license.supabaseUrl : ""
-                        font.family: "Consolas"
-                    }
-
-                    Text {
-                        text: qsTr("Supabase Anon Key:")
-                        font.family: Theme.fontFamily
-                        font.pixelSize: TypeScale.label
-                        color: Theme.textMuted
-                    }
-                    AppTextField {
-                        id: serverKeyField
-                        Layout.fillWidth: true
-                        placeholderText: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                        text: root.license ? root.license.supabaseKey : ""
-                        font.family: "Consolas"
-                        echoMode: TextInput.PasswordEchoOnEdit
-                    }
-
-                    RowLayout {
-                        Layout.fillWidth: true
-                        Item { Layout.fillWidth: true }
-
-                        StudioButton {
-                            text: qsTr("Lưu cấu hình máy chủ")
-                            variant: "secondary"
-                            onClicked: {
-                                if (root.license) {
-                                    root.license.saveServerConfig(serverUrlField.text.trim(), serverKeyField.text.trim());
-                                }
                             }
                         }
                     }

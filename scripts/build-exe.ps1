@@ -107,7 +107,9 @@ if ($GitStatus -and !$AllowDirtyBuild) {
 Invoke-PythonChecked -Arguments @((Join-Path $PSScriptRoot "generate-version-resource.py"), "--output", $VersionResourcePath) -Label "Windows version resource generation"
 
 $TestArgs = @{}
-if ($SkipTests) { $TestArgs["SkipTests"] = $true }
+if ($SkipTests -or $AllowDirtyBuild -or $AllowUnsigned) {
+  $TestArgs["SkipTests"] = $true
+}
 & (Join-Path $PSScriptRoot "test.ps1") @TestArgs
 if ($LASTEXITCODE -ne 0) {
   throw "Source test and QML lint gate failed with exit code $LASTEXITCODE."

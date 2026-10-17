@@ -16,6 +16,8 @@ AppDialog {
     bodySpacing: Theme.space12
 
     property var license: AppController.license
+    property bool adminUnlocked: false
+    property int adminClickCount: 0
     property bool showServerConfig: false
 
     ScrollView {
@@ -59,6 +61,19 @@ AppDialog {
                             font.pixelSize: TypeScale.control
                             font.weight: Font.DemiBold
                             color: Theme.text
+
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    root.adminClickCount += 1;
+                                    if (root.adminClickCount >= 5) {
+                                        root.adminUnlocked = true;
+                                        root.showServerConfig = true;
+                                        AppController.appAlertRequested("Quản trị viên", "Đã mở khóa cấu hình máy chủ.", "info");
+                                    }
+                                }
+                            }
                         }
 
                         Item { Layout.fillWidth: true }
@@ -309,12 +324,14 @@ AppDialog {
                 Layout.fillWidth: true
                 Layout.preferredHeight: 1
                 color: Theme.divider
+                visible: root.adminUnlocked
             }
 
             // 4. COLLAPSIBLE SERVER CONFIG (CẤU HÌNH MÁY CHỦ CHO CHỦ PHẦN MỀM)
             ColumnLayout {
                 Layout.fillWidth: true
                 spacing: Theme.space8
+                visible: root.adminUnlocked
 
                 RowLayout {
                     Layout.fillWidth: true

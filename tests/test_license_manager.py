@@ -74,6 +74,8 @@ def test_consume_usage_credit(tmp_path, monkeypatch):
     monkeypatch.setattr(license_manager, "SERVER_CONFIG_FILE", tmp_path / "license-server.json")
 
     # When server config is not set, allow execution (fallback for dev)
+    monkeypatch.setattr(license_manager, "DEFAULT_SUPABASE_URL", "")
+    monkeypatch.setattr(license_manager, "DEFAULT_SUPABASE_KEY", "")
     allowed, msg = license_manager.consume_usage_credit()
     assert allowed is True
 

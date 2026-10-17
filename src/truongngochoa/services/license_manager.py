@@ -44,18 +44,30 @@ def get_machine_hwid() -> str:
     return hashlib.sha256(raw_id.encode("utf-8")).hexdigest()[:20].upper()
 
 
+DEFAULT_SUPABASE_URL = "https://whjslcwgvdnlkqipzhix.supabase.co"
+DEFAULT_SUPABASE_KEY = "sb_publishable_FGiXiftnae6Nl8DrUt5AGQ_90xNXk1k"
+
+
+def clean_supabase_url(url: str) -> str:
+    """Sanitize Supabase URL by trimming slashes and removing redundant /rest/v1 suffixes."""
+    url = str(url or "").strip().rstrip("/")
+    if url.endswith("/rest/v1"):
+        url = url[:-len("/rest/v1")].rstrip("/")
+    return url
+
+
 def load_server_config() -> dict[str, str]:
     """Load Supabase or custom license API endpoints and API keys."""
     config = {
-        "supabase_url": os.getenv("TRUONGNGOCHOA_LICENSE_URL", "").strip().rstrip("/"),
-        "supabase_key": os.getenv("TRUONGNGOCHOA_LICENSE_KEY", "").strip(),
+        "supabase_url": clean_supabase_url(os.getenv("TRUONGNGOCHOA_LICENSE_URL", "")) or DEFAULT_SUPABASE_URL,
+        "supabase_key": os.getenv("TRUONGNGOCHOA_LICENSE_KEY", "").strip() or DEFAULT_SUPABASE_KEY,
     }
     if SERVER_CONFIG_FILE.is_file():
         try:
             data = json.loads(SERVER_CONFIG_FILE.read_text(encoding="utf-8"))
             if isinstance(data, dict):
                 if data.get("supabase_url"):
-                    config["supabase_url"] = str(data["supabase_url"]).strip().rstrip("/")
+                    config["supabase_url"] = clean_supabase_url(data["supabase_url"])
                 if data.get("supabase_key"):
                     config["supabase_key"] = str(data["supabase_key"]).strip()
         except Exception:
@@ -69,7 +81,7 @@ def save_server_config(supabase_url: str, supabase_key: str) -> None:
     with _LICENSE_LOCK:
         SERVER_CONFIG_FILE.write_text(
             json.dumps({
-                "supabase_url": str(supabase_url).strip().rstrip("/"),
+                "supabase_url": clean_supabase_url(supabase_url),
                 "supabase_key": str(supabase_key).strip(),
             }, indent=2, ensure_ascii=False),
             encoding="utf-8"

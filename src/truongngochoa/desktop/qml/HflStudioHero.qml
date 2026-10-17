@@ -72,7 +72,7 @@ Item {
                         Layout.fillWidth: true
                         spacing: 2
                         Text {
-                            text: qsTr("Trình tạo video AI (HaizFlow Studio)")
+                            text: qsTr("Trình tạo video AI (HFL Studio)")
                             color: Theme.text
                             font.family: Theme.fontFamily
                             font.pixelSize: TypeScale.section
@@ -450,7 +450,7 @@ Item {
                         anchors.top: parent.top
                         anchors.right: parent.right
                         anchors.margins: Theme.space8
-                        text: "HAIZFLOW AI"
+                        text: "HFL AI STUDIO"
                         color: "#B0F1F5FF"
                         font.family: Theme.fontFamily
                         font.pixelSize: 10

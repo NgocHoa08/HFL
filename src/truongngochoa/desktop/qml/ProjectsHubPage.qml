@@ -99,7 +99,7 @@ Item {
             }
         }
 
-        HaizFlowStudioHero {
+        HflStudioHero {
             visible: root.pageTitle === qsTr("Trang chủ")
             Layout.fillWidth: true
             onRequestCreate: function(mode, prompt) {

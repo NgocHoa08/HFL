@@ -72,7 +72,7 @@ Rectangle {
                 RowLayout {
                     spacing: 4
                     Text {
-                        text: "HaizFlow"
+                        text: "HFL"
                         color: Theme.text
                         font.family: Theme.fontFamily
                         font.pixelSize: TypeScale.section
@@ -228,7 +228,7 @@ Rectangle {
                         }
                     }
                     Text {
-                        text: "HaizFlow Pro AI"
+                        text: "HFL Pro AI"
                         color: Theme.text
                         font.family: Theme.fontFamily
                         font.pixelSize: TypeScale.label

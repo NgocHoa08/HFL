@@ -6,7 +6,7 @@ QtObject {
 
     readonly property string fontFamily: "Segoe UI Variable"
 
-    // HaizFlow Cyber Navy AI SaaS Palette
+    // HFL Cyber Navy AI SaaS Palette
     // Deep layered dark navy with electric blue and purple accents
     readonly property color window: "#071225"
     readonly property color surface: "#0B172B"

@@ -413,7 +413,7 @@ export const VideoPreviewPanel: React.FC<VideoPreviewPanelProps> = ({
       <div className="grid grid-cols-4 gap-2 pt-3 border-t border-[#203455]/70">
         <button
           type="button"
-          onClick={() => onShowToast('Chỉnh sửa video', 'Đang mở phòng biên tập video HaizFlow Studio')}
+          onClick={() => onShowToast('Chỉnh sửa video', 'Đang mở phòng biên tập video HFL Studio')}
           className="flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl bg-[#142441] border border-[#203455] text-[#A5B5D4] hover:text-white hover:border-[#3867FF]/50 hover:bg-[#3867FF]/15 transition-all text-xs font-medium cursor-pointer active:scale-[0.98]"
         >
           <Pencil className="w-3.5 h-3.5 text-[#3867FF]" />

@@ -23,7 +23,7 @@ export const Header: React.FC<HeaderProps> = ({ onShowToast }) => {
       {/* Left: Brand & Tagline */}
       <div className="flex items-center gap-4">
         {/* Logo */}
-        <div className="flex items-center gap-3 cursor-pointer group" onClick={() => onShowToast('HaizFlow AI', 'Bạn đang ở trang chủ')}>
+        <div className="flex items-center gap-3 cursor-pointer group" onClick={() => onShowToast('HFL AI', 'Bạn đang ở trang chủ')}>
           <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-[#3867FF] to-[#6246F5] p-[1px] shadow-lg shadow-[#3867FF]/20 flex items-center justify-center transition-transform group-hover:scale-105">
             <div className="w-full h-full bg-[#081326] rounded-[11px] flex items-center justify-center overflow-hidden relative">
               <div className="absolute inset-0 bg-gradient-to-tr from-[#3867FF]/30 to-[#6246F5]/40 opacity-80" />
@@ -39,7 +39,7 @@ export const Header: React.FC<HeaderProps> = ({ onShowToast }) => {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xl font-bold tracking-tight text-white font-['Inter']">HaizFlow</span>
+              <span className="text-xl font-bold tracking-tight text-white font-['Inter']">HFL</span>
               <span className="text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-gradient-to-r from-[#3867FF]/20 to-[#6246F5]/20 text-[#3867FF] border border-[#3867FF]/30">PRO</span>
             </div>
             <p className="text-xs text-[#A5B5D4] hidden sm:block">
@@ -131,7 +131,7 @@ export const Header: React.FC<HeaderProps> = ({ onShowToast }) => {
             <div className="absolute right-0 mt-2 w-56 bg-[#0B172B] border border-[#203455] rounded-xl shadow-2xl z-50 p-1.5 text-sm animate-in fade-in slide-in-from-top-2 duration-150">
               <div className="px-3 py-2 border-b border-[#203455] mb-1">
                 <p className="text-xs text-[#A5B5D4]">Đăng nhập với</p>
-                <p className="font-semibold text-white truncate">hoangoc@haizflow.ai</p>
+                <p className="font-semibold text-white truncate">hoangoc@hfl.ai</p>
               </div>
 
               <button 
@@ -151,7 +151,7 @@ export const Header: React.FC<HeaderProps> = ({ onShowToast }) => {
               </button>
 
               <button 
-                onClick={() => { setShowUserMenu(false); onShowToast('Cài đặt', 'Mở cài đặt hệ thống HaizFlow'); }}
+                onClick={() => { setShowUserMenu(false); onShowToast('Cài đặt', 'Mở cài đặt hệ thống HFL'); }}
                 className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[#A5B5D4] hover:text-white hover:bg-[#142441] text-xs transition-colors text-left"
               >
                 <Settings className="w-4 h-4 text-[#A5B5D4]" />

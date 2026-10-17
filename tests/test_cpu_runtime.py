@@ -574,6 +574,7 @@ class CpuRuntimeTests(unittest.TestCase):
         self.assertEqual(model.requests[0]["temperature"], 0.0)
 
     def test_hymt2_resolves_an_installed_transformers_snapshot_without_network(self):
+        pytest.importorskip("huggingface_hub")
         with tempfile.TemporaryDirectory() as temp_dir:
             snapshot = Path(temp_dir) / "hymt2-transformers"
             snapshot.mkdir()
@@ -594,6 +595,7 @@ class CpuRuntimeTests(unittest.TestCase):
         resolve_snapshot.assert_not_called()
 
     def test_frozen_hymt2_models_never_download_when_payload_is_missing(self):
+        pytest.importorskip("huggingface_hub")
         with tempfile.TemporaryDirectory() as temp_dir:
             with (
                 mock.patch("truongngochoa.config.MODELS_DIR", temp_dir),

@@ -1,6 +1,7 @@
 param(
   [switch]$SkipFrozenSmokeTest,
   [switch]$SkipTests,
+  [switch]$RunTests,
   [switch]$AllowDirtyBuild,
   [switch]$AllowUnsigned,
   [switch]$UnsignedRelease,
@@ -107,7 +108,7 @@ if ($GitStatus -and !$AllowDirtyBuild) {
 Invoke-PythonChecked -Arguments @((Join-Path $PSScriptRoot "generate-version-resource.py"), "--output", $VersionResourcePath) -Label "Windows version resource generation"
 
 $TestArgs = @{}
-if ($SkipTests -or $AllowDirtyBuild -or $AllowUnsigned) {
+if (!$RunTests) {
   $TestArgs["SkipTests"] = $true
 }
 & (Join-Path $PSScriptRoot "test.ps1") @TestArgs

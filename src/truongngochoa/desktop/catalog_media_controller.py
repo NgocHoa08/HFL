@@ -70,7 +70,10 @@ class CatalogMediaController:
             for video_id in video_ids:
                 if shutdown_event is not None and shutdown_event.is_set():
                     break
-                video = video_store.get_video(video_id)
+                try:
+                    video = video_store.get_video(video_id)
+                except (ValueError, KeyError, FileNotFoundError):
+                    continue
                 if not video or thumbnail_source(video.files.get("thumbnail") or ""):
                     continue
                 path = host._resolve_video_file(video, ("video_input", "input_video"), ("input", "video.mp4"))

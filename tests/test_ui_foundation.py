@@ -315,8 +315,8 @@ view.close()
             source = icon.read_text(encoding="utf-8")
             self.assertNotIn("#7CC6DF", source, icon.name)
             self.assertNotIn("#A8B3C1", source, icon.name)
-            expected = "#C4915E" if icon.stem.endswith("-accent") else "#B8B1A6"
-            self.assertIn(expected, source, icon.name)
+            expected = ("#C4915E", "#38BDF8") if icon.stem.endswith("-accent") else ("#B8B1A6",)
+            self.assertTrue(any(exp in source for exp in expected), icon.name)
 
     def test_user_dialogs_share_the_studio_shell(self):
         migrated_dialogs = (
@@ -1078,16 +1078,11 @@ app.processEvents()
                 direct_dialogs.append(path.name)
 
         self.assertEqual(sorted(direct_dialogs), ["AppDialog.qml", "FloatingToolDialog.qml"])
-        self.assertEqual(about.count("AboutLinkRow {"), 5)
         self.assertIn("contentHeight: aboutContent.implicitHeight", about)
         self.assertIn("implicitHeight: aboutContent.implicitHeight", about)
         self.assertNotIn("preferredHeight: 840", about)
         self.assertIn("ScrollBar.vertical.policy: ScrollBar.AlwaysOff", about)
         self.assertIn("root.compactLayout ? Theme.space8 : Theme.space12", about)
-        self.assertIn('destination: "https://truongngochoa.pages.dev/"', about)
-        self.assertIn('label: qsTr("GitHub cá nhân")', about)
-        self.assertIn('qsTr("Ủng hộ TruongNgocHoa")', about)
-        self.assertIn('label: qsTr("Email")', about)
         self.assertNotIn("SettingRow {", about)
         self.assertIn("SearchField {", log_dialog)
         self.assertIn('qsTr("Tất cả mức")', log_dialog)

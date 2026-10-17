@@ -93,7 +93,7 @@ class OfflinePackTests(unittest.TestCase):
                 self.assertEqual(paths.models_dir(), resources.resolve() / "models")
                 self.assertEqual(paths.runtime_data_dir(), app.resolve() / "runtime/data")
                 os.environ.pop("TRUONGNGOCHOA_ENGINE_APP_ROOT")
-                with self.assertRaisesRegex(ValueError, "TruongNgocHoa"):
+                with self.assertRaisesRegex(ValueError, r"(?:TruongNgocHoa|Trương Ngọc Hoà)"):
                     paths.install_root()
 
     def test_core_cleans_inherited_overrides_before_starting_engine(self):

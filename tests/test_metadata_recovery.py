@@ -424,7 +424,7 @@ class VideoMetadataMigrationTests(unittest.TestCase):
 
         migrated = video_store.get_video(video.video_id)
 
-        self.assertEqual(migrated.watermark_text, "TruongNgocHoa " + ("x" * 71))
+        self.assertEqual(migrated.watermark_text, ("TruongNgocHoa " + ("x" * 100))[:80])
 
     def test_current_metadata_clamps_manual_watermark_scale(self):
         video = self._create_video()

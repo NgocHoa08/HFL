@@ -411,10 +411,14 @@ class DeltaUpdateTests(unittest.TestCase):
         if result.returncode:
             self.skipTest("junction creation unavailable")
         try:
-            with self.assertRaises(UpdateError):
+            with patch("truongngochoa.core.paths.runtime_overrides_allowed", return_value=False), self.assertRaises(UpdateError):
                 remove_owned(self.layout.staging, owned)
         finally:
-            os.rmdir(owned / "link")  # unlink junction only; never recursive
+            if (owned / "link").exists():
+                try:
+                    os.rmdir(owned / "link")
+                except OSError:
+                    pass
         self.assertEqual(self.before, self.user_data())
 
 
@@ -432,7 +436,7 @@ class Response(BytesIO):
 
 class DownloadTests(unittest.TestCase):
     def test_official_public_release_requires_stable_tag_repo(self):
-        payload = {"tag_name": "v0.2.0", "html_url": "https://github.com/MachHongHai/HaizFlow/releases/tag/v0.2.0",
+        payload = {"tag_name": "v0.2.0", "html_url": "https://github.com/NgocHoa08/HFL/releases/tag/v0.2.0",
                    "draft": False, "prerelease": False, "assets": []}
         for changes in ({}, {"draft": True}, {"tag_name": "v0.2.0-rc1"}, {"html_url": "https://github.com/other/repo/releases/tag/v0.2.0"}):
             client = GitHubClient(opener=lambda *_args, **_kwargs: Response(json.dumps(dict(payload, **changes)).encode(), API))
@@ -447,13 +451,13 @@ class DownloadTests(unittest.TestCase):
                     "https://github.com@evil.invalid/file"):
             with self.subTest(url=url), self.assertRaises(UpdateError):
                 allowed_url(url)
-        request = __import__("urllib.request", fromlist=["Request"]).Request("https://github.com/MachHongHai/HaizFlow/releases/download/v0.2.0/file.zip")
+        request = __import__("urllib.request", fromlist=["Request"]).Request("https://github.com/NgocHoa08/HFL/releases/download/v0.2.0/file.zip")
         with self.assertRaises(UpdateError):
             RedirectPolicy().redirect_request(request, None, 302, "Found", {}, "https://evil.invalid/a")
 
     def test_partial_and_wrong_digest_downloads_never_publish(self):
         data = b"package"
-        asset = {"name": "file.zip", "url": "https://github.com/MachHongHai/HaizFlow/releases/download/v0.2.0/file.zip",
+        asset = {"name": "file.zip", "url": "https://github.com/NgocHoa08/HFL/releases/download/v0.2.0/file.zip",
                  "size": len(data), "sha256": hashlib.sha256(data).hexdigest()}
         with tempfile.TemporaryDirectory() as directory:
             for body in (b"half", b"wrong!!"):

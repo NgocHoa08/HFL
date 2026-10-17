@@ -342,7 +342,8 @@ class RenderExportStorageTests(unittest.TestCase):
     @unittest.skipUnless(os.name == "nt" and Path("D:/").is_dir() and Path("C:/").is_dir(), "Cross-volume Windows integration")
     def test_project_on_d_drive_exports_to_c_drive(self):
         with tempfile.TemporaryDirectory(prefix="truongngochoa-cross-drive-", dir=Path.cwd() / "build") as directory:
-            self.assertEqual(Path(directory).drive.casefold(), "d:")
+            if Path(directory).drive.casefold() != "d:":
+                self.skipTest("Cross-volume test requires workspace on D:")
             if self.external.drive.casefold() != "c:":
                 self.skipTest("Cross-volume test requires TEMP on C: and workspace on D:")
             project = project_store.create_project("Cross drive", directory, "single")

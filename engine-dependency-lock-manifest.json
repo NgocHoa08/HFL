@@ -2,26 +2,26 @@
   "schema_version": 1,
   "target": "windows-x86_64-python-3.13",
   "inputs": {
-    "requirements-build.in": "8b8985be9f6c46e539f5686a2f2a11136447e70c8c34db65dc590cd35f7e36fb",
-    "requirements-engine-common.in": "8c860aae0f3ac78a83f7bef9445964981638a55882a49987deedae6936459a9e",
-    "requirements-engine-cpu.in": "9343a5bc6d65bce1bab6c8c47b6d7deb9c5ec16b64cfc683299ecc03d7bf11fb",
-    "requirements-engine-cuda128.in": "ab52630c4ee0987e9fd7c93737e507b6f585924f23d66b17d384facd90a7eb0e",
-    "requirements-engine-vision.in": "56c17311cc4059130743760eb3d064a221ade1af018d966b2487b73d60b81a7c"
+    "requirements-build.in": "fcb5a6d8d61f4329b4088affc9897b3700e1688a61505c222ab898ca573cb744",
+    "requirements-engine-common.in": "f1e85047b3032d410bfc500b63cfff1a012e1fb7f73f5eb3691c9de6570fc07f",
+    "requirements-engine-cpu.in": "54e6e67508b7d5329ac9bbe5681b5a4d4d59d438629c2039fd37cf934888c239",
+    "requirements-engine-cuda128.in": "9dc093e013ffa98a8f494bfed32ecd9fa7b71ffe66ec992a2580539a48bda4cf",
+    "requirements-engine-vision.in": "8a023de92f8aa9d09cfe2c4f0583ea4a7c1ad19edbe71195698afc044c60bf74"
   },
   "locks": {
     "cpu": {
       "file": "requirements-lock-engine-cpu-py313-win64.txt",
-      "sha256": "16d0b56213bcdeef4eda5ff808bc722e76e76ef3ac9dd280fd825d572876b00e",
+      "sha256": "64c43fd60d31221a451687702e0cbb9c9595972d6f68ba6b7fd67d0a299244f0",
       "packages": 135
     },
     "cuda128": {
       "file": "requirements-lock-engine-cuda128-py313-win64.txt",
-      "sha256": "d93327d1959c01d26f4e6c2ae980ed9ed7a69938833ac2768e490edc7bc2d0d5",
+      "sha256": "2e754877dc8aec478127abdfaaf6ca7cd715fe5185d2f97df1635b00664913b5",
       "packages": 133
     },
     "vision": {
       "file": "requirements-lock-engine-vision-py313-win64.txt",
-      "sha256": "0af555e0be1698a612fd37dc1bbf8df824424bf24be06050eec87dd8173ca05f",
+      "sha256": "fa4b8da24ccb3f84b72a414b1333cf23731fd9e88f54bdb764e0dcdafd8e8e2d",
       "packages": 44
     }
   }

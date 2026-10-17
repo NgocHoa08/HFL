@@ -34,7 +34,8 @@ def test_auto_audio_options_survive_config_round_trip():
 
 
 def test_bounded_reader_matches_safetensors_including_bfloat16(tmp_path):
-    import torch
+    torch = pytest.importorskip("torch")
+    pytest.importorskip("safetensors")
     from safetensors.torch import save_file
 
     tensors = {"bf": torch.arange(12).reshape(3, 4).to(torch.bfloat16),
@@ -51,7 +52,8 @@ def test_bounded_reader_matches_safetensors_including_bfloat16(tmp_path):
 
 
 def test_bounded_reader_rejects_truncated_data(tmp_path):
-    import torch
+    torch = pytest.importorskip("torch")
+    pytest.importorskip("safetensors")
     from safetensors.torch import save_file
 
     path = tmp_path / "weights.safetensors"

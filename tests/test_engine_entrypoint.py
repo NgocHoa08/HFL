@@ -117,6 +117,7 @@ class EngineEntrypointTests(unittest.TestCase):
             patch.dict(sys.modules, {"torch": fake_torch}),
             patch.object(engine_main.importlib, "import_module", return_value=fake_torch),
             patch.object(engine_main.importlib.metadata, "version", return_value="2.8.0+cu128"),
+            patch.object(engine_main, "media_smoke_test"),
         ):
             with self.assertRaisesRegex(RuntimeError, "CPU engine contains a CUDA"):
                 engine_main.smoke_test("cpu")

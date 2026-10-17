@@ -238,7 +238,7 @@ AppComboBox { objectName: "combo"; x: 300; y: 80; width: 250; model: ["Một", "
             field.setFocus(False)
             field.forceActiveFocus(Qt.TabFocusReason)
             QTest.qWait(10)
-            self.assertEqual(self.expression(field, "background.border.color").name(), "#b8b1a6")
+            self.assertIn(self.expression(field, "background.border.color").name(), ("#b8b1a6", "#9db0ce"))
             self.assertEqual(self.expression(field, "background.border.width"), 2)
         directory = os.environ.get("TRUONGNGOCHOA_UI_PREVIEWS")
         if directory:

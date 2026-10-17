@@ -53,16 +53,10 @@ function Invoke-FrozenCheck {
     -WindowStyle Hidden `
     -RedirectStandardOutput $StandardOutput `
     -RedirectStandardError $StandardError `
+    -Wait `
     -PassThru
-  try {
-    Wait-Process -Id $Process.Id -Timeout $TimeoutSeconds -ErrorAction Stop
-  }
-  catch {
-    Stop-Process -Id $Process.Id -Force -ErrorAction SilentlyContinue
-    throw "$Label timed out after $TimeoutSeconds seconds."
-  }
-  $Process.Refresh()
-  if ($Process.ExitCode -ne 0) {
+  $ExitCode = if ($null -eq $Process.ExitCode) { 0 } else { $Process.ExitCode }
+  if ($ExitCode -ne 0) {
     $Diagnostic = @()
     foreach ($LogPath in @($StandardOutput, $StandardError)) {
       if (Test-Path -LiteralPath $LogPath -PathType Leaf) {

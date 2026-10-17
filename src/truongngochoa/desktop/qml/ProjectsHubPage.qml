@@ -99,6 +99,20 @@ Item {
             }
         }
 
+        HaizFlowStudioHero {
+            visible: root.pageTitle === qsTr("Trang chủ")
+            Layout.fillWidth: true
+            onRequestCreate: function(mode, prompt) {
+                root.requestNewProject("single");
+            }
+            onRequestManualStudio: function() {
+                root.requestNewProject("manual");
+            }
+            onRequestDownload: function() {
+                root.requestNewProject("download");
+            }
+        }
+
         RowLayout {
             Layout.fillWidth: true
             spacing: Theme.space8

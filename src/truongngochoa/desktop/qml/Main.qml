@@ -519,6 +519,7 @@ ApplicationWindow {
                 Layout.fillHeight: true
                 compact: root.compactNavigation
                 currentSection: root.navigationSection()
+                onLicenseRequested: licenseDialogLoader.invoke("open", [])
                 onSectionRequested: function (section) {
                     AppController.refreshVideos();
                     if (section === "single")

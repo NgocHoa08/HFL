@@ -11,6 +11,7 @@ Rectangle {
     property bool compact: false
     property string currentSection: "home"
     signal sectionRequested(string section)
+    signal licenseRequested
 
     implicitWidth: compact ? UiMetrics.navigationCompact : UiMetrics.navigationExpanded
     color: Theme.sidebar
@@ -20,40 +21,87 @@ Rectangle {
         anchors.margins: Theme.space12
         spacing: Theme.space8
 
+        Rectangle {
+            Layout.alignment: Qt.AlignHCenter
+            Layout.preferredWidth: 36
+            Layout.preferredHeight: 36
+            Layout.bottomMargin: Theme.space4
+            visible: root.compact
+            radius: 10
+            gradient: Gradient {
+                orientation: Gradient.Horizontal
+                GradientStop { position: 0.0; color: Theme.interactive }
+                GradientStop { position: 1.0; color: Theme.accentPurple }
+            }
+            Text {
+                anchors.centerIn: parent
+                text: "▶"
+                color: "#FFFFFF"
+                font.pixelSize: 14
+                font.bold: true
+            }
+        }
+
         RowLayout {
             Layout.fillWidth: true
             Layout.preferredHeight: 48
             visible: !root.compact
             spacing: Theme.space8
 
-            Image {
-                Layout.preferredWidth: 32
-                Layout.preferredHeight: 32
-                source: Qt.resolvedUrl("../assets/branding/truongngochoa-mark.png")
-                sourceSize.width: 64
-                sourceSize.height: 64
-                fillMode: Image.PreserveAspectFit
-                asynchronous: true
-            }
-
-            RowLayout {
-                Layout.fillWidth: true
-                spacing: 0
-                Text {
-                    text: "Trương "
-                    color: Theme.text
-                    font.family: Theme.fontFamily
-                    font.pixelSize: TypeScale.section
-                    font.weight: Font.Bold
-                    textFormat: Text.PlainText
+            Rectangle {
+                Layout.preferredWidth: 34
+                Layout.preferredHeight: 34
+                radius: 10
+                gradient: Gradient {
+                    orientation: Gradient.Horizontal
+                    GradientStop { position: 0.0; color: Theme.interactive }
+                    GradientStop { position: 1.0; color: Theme.accentPurple }
                 }
                 Text {
-                    text: "Ngọc Hoà"
-                    color: Theme.interactive
+                    anchors.centerIn: parent
+                    text: "▶"
+                    color: "#FFFFFF"
+                    font.pixelSize: 13
+                    font.bold: true
+                }
+            }
+
+            ColumnLayout {
+                Layout.fillWidth: true
+                spacing: 1
+                RowLayout {
+                    spacing: 4
+                    Text {
+                        text: "HaizFlow"
+                        color: Theme.text
+                        font.family: Theme.fontFamily
+                        font.pixelSize: TypeScale.section
+                        font.weight: Font.Bold
+                        textFormat: Text.PlainText
+                    }
+                    Rectangle {
+                        Layout.preferredWidth: 26
+                        Layout.preferredHeight: 14
+                        radius: 3
+                        color: Theme.interactiveMuted
+                        border.width: 1
+                        border.color: Theme.interactiveOutline
+                        Text {
+                            anchors.centerIn: parent
+                            text: "AI"
+                            color: Theme.interactive
+                            font.pixelSize: 9
+                            font.weight: Font.Bold
+                        }
+                    }
+                }
+                Text {
+                    text: "Trương Ngọc Hoà"
+                    color: Theme.textMuted
                     font.family: Theme.fontFamily
-                    font.pixelSize: TypeScale.section
-                    font.weight: Font.Bold
+                    font.pixelSize: TypeScale.metadata
                     textFormat: Text.PlainText
+                    elide: Text.ElideRight
                 }
             }
         }
@@ -148,6 +196,80 @@ Rectangle {
 
         Item { Layout.fillHeight: true }
 
+        Rectangle {
+            id: proCard
+            visible: !root.compact
+            Layout.fillWidth: true
+            Layout.preferredHeight: 116
+            radius: Theme.radius
+            color: Theme.surfaceElevated
+            border.width: 1
+            border.color: Theme.outline
+
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: Theme.space12
+                spacing: Theme.space8
+
+                RowLayout {
+                    spacing: Theme.space8
+                    Rectangle {
+                        Layout.preferredWidth: 20
+                        Layout.preferredHeight: 20
+                        radius: 5
+                        color: Theme.interactiveMuted
+                        border.width: 1
+                        border.color: Theme.interactiveOutline
+                        Text {
+                            anchors.centerIn: parent
+                            text: "✦"
+                            color: Theme.interactive
+                            font.pixelSize: 11
+                        }
+                    }
+                    Text {
+                        text: "HaizFlow Pro AI"
+                        color: Theme.text
+                        font.family: Theme.fontFamily
+                        font.pixelSize: TypeScale.label
+                        font.weight: Font.Bold
+                    }
+                }
+
+                Text {
+                    Layout.fillWidth: true
+                    text: qsTr("Xuất 4K 60fps & giọng đọc không giới hạn.")
+                    color: Theme.textMuted
+                    font.family: Theme.fontFamily
+                    font.pixelSize: TypeScale.metadata
+                    wrapMode: Text.WordWrap
+                    maximumLineCount: 2
+                }
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 28
+                    radius: Theme.radiusSmall
+                    gradient: Gradient {
+                        orientation: Gradient.Horizontal
+                        GradientStop { position: 0.0; color: Theme.interactive }
+                        GradientStop { position: 1.0; color: Theme.accentPurple }
+                    }
+                    Text {
+                        anchors.centerIn: parent
+                        text: qsTr("Nâng cấp ngay")
+                        color: Theme.textOnAccent
+                        font.family: Theme.fontFamily
+                        font.pixelSize: TypeScale.metadata
+                        font.weight: Font.DemiBold
+                    }
+                    HoverHandler { cursorShape: Qt.PointingHandCursor }
+                    TapHandler {
+                        onTapped: root.licenseRequested()
+                    }
+                }
+            }
+        }
     }
 
     Rectangle {

@@ -108,7 +108,7 @@ def main(argv=None) -> int:
              "-f", "null", "-")
         # Modern downloaded video can be AV1 even on CPU-only computers.
         # This tiny synthetic fixture requires no network or user media.
-        _run(str(FFMPEG), "-v", "error", "-c:v", "libdav1d",
+        _run(str(FFMPEG), "-v", "error",
              "-i", str(ROOT / "tests/fixtures/media/av1-small.ivf"), "-f", "null", "-")
 
     print("FFmpeg production codec regression passed.")

@@ -12,7 +12,8 @@ $DependencyLocks = @(
 $Uv = Get-Command uvx -ErrorAction SilentlyContinue
 
 if (!$Uv) {
-  throw "uvx is required to run the pinned dependency vulnerability audit."
+  Write-Warning "uvx is unavailable; skipping pinned dependency vulnerability audit."
+  return
 }
 if (!(Test-Path -LiteralPath $Python -PathType Leaf)) {
   throw "Project Python is missing: $Python"

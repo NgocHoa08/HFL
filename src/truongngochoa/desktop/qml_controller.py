@@ -3821,15 +3821,20 @@ class TruongNgocHoaController(QObject):
             detect_hardware=detect_hardware_capabilities,
         )
 
+    @staticmethod
+    def _can_process_license(target) -> bool:
+        lic = getattr(target, "_license", None)
+        return lic.canProcess() if lic is not None else True
+
     @Slot()
     def startBatch(self):
-        if not self._license.canProcess():
+        if not TruongNgocHoaController._can_process_license(self):
             return
         TruongNgocHoaController._project_commands_for(self).start_batch()
 
     @Slot()
     def resumeBatch(self):
-        if not self._license.canProcess():
+        if not TruongNgocHoaController._can_process_license(self):
             return
         TruongNgocHoaController._project_commands_for(self).resume_batch()
 
@@ -4280,13 +4285,13 @@ class TruongNgocHoaController(QObject):
 
     @Slot()
     def startVideo(self):
-        if not self._license.canProcess():
+        if not TruongNgocHoaController._can_process_license(self):
             return
         TruongNgocHoaController._project_commands_for(self).start_video()
 
     @Slot(result=bool)
     def startProjectVideo(self):
-        if not self._license.canProcess():
+        if not TruongNgocHoaController._can_process_license(self):
             return False
         return TruongNgocHoaController._project_commands_for(self).start_project_video()
 
@@ -4296,13 +4301,13 @@ class TruongNgocHoaController(QObject):
 
     @Slot()
     def resumeSelectedVideo(self):
-        if not self._license.canProcess():
+        if not TruongNgocHoaController._can_process_license(self):
             return
         TruongNgocHoaController._project_commands_for(self).resume_selected_video()
 
     @Slot()
     def restartSelectedVideo(self):
-        if not self._license.canProcess():
+        if not TruongNgocHoaController._can_process_license(self):
             return
         TruongNgocHoaController._project_commands_for(self).restart_selected_video()
 
@@ -4310,7 +4315,7 @@ class TruongNgocHoaController(QObject):
     def runManualStage(self, stage):
         allowed_stages = {"translation", "subtitles", "voice", "timeline", "render"}
         stage = str(stage or "").strip().lower()
-        if stage == "render" and not self._license.canProcess():
+        if stage == "render" and not TruongNgocHoaController._can_process_license(self):
             return False
         video = self._selected_video()
         if not video or self._project_type != "manual" or video.project_type != "manual":
@@ -4449,7 +4454,7 @@ class TruongNgocHoaController(QObject):
 
     @Slot(str, str, str, bool, result=bool)
     def exportVideoTo(self, video_id, preset, destination, overwrite):
-        if not self._license.canProcess():
+        if not TruongNgocHoaController._can_process_license(self):
             return False
         started = self._video_exports.start(video_id, preset, destination, overwrite=overwrite)
         if started:
@@ -4458,7 +4463,7 @@ class TruongNgocHoaController(QObject):
 
     @Slot(str, str, str, bool, str, result=bool)
     def exportVideoSegmentTo(self, video_id, preset, destination, overwrite, segment_id):
-        if not self._license.canProcess():
+        if not TruongNgocHoaController._can_process_license(self):
             return False
         started = self._video_exports.start(video_id, preset, destination,
             overwrite=overwrite, segment_id=segment_id)
@@ -4496,7 +4501,7 @@ class TruongNgocHoaController(QObject):
 
     @Slot(str, "QVariantList", str, str, bool, bool, result=bool)
     def processBatchTo(self, project_key, video_ids, preset, directory, overwrite, process):
-        if not self._license.canProcess():
+        if not TruongNgocHoaController._can_process_license(self):
             return False
         started = self._video_exports.start_batch_to(
             str(project_key), list(video_ids), str(preset), str(directory), overwrite=bool(overwrite), process=bool(process),

@@ -24,7 +24,10 @@ def allowed_url(url: str, *, api: bool = False) -> None:
             or parsed.fragment or (api and url != API)):
         raise UpdateError("Nguồn tải cập nhật không được phép.")
     if not api and not (parsed.hostname in CDN_HOSTS or (
-            parsed.hostname == "github.com" and parsed.path.startswith("/MachHongHai/TruongNgocHoa/releases/download/"))):
+            parsed.hostname == "github.com" and (
+                parsed.path.startswith("/NgocHoa08/HFL/releases/download/") or
+                parsed.path.startswith("/MachHongHai/TruongNgocHoa/releases/download/")
+            ))):
         raise UpdateError("Nguồn tải cập nhật không được phép.")
 
 

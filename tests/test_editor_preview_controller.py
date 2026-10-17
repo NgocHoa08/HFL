@@ -180,7 +180,7 @@ class EditorPreviewControllerTests(unittest.TestCase):
         }
         changed = dict(
             settings,
-            watermark_text="Mạch Hồng Hải",
+            watermark_text="Trương Ngọc Hoà",
             watermark_scale_percent=240,
         )
 

@@ -58,8 +58,8 @@
     </message>
     <message>
         <location line="+17"/>
-        <source>Mình là Mạch Hồng Hải, nhà phát triển của TruongNgocHoa. Nếu bạn thích ứng dụng này, đừng ngần ngại cho Trương Ngọc Hoà 1 sao trên Github</source>
-        <translation>I&apos;m Mạch Hồng Hải, the developer of TruongNgocHoa. If you like the app, don&apos;t hesitate to give Trương Ngọc Hoà one star on GitHub.</translation>
+        <source>Mình là Trương Ngọc Hoà, nhà phát triển của TruongNgocHoa. Nếu bạn thích ứng dụng này, đừng ngần ngại cho Trương Ngọc Hoà 1 sao trên Github</source>
+        <translation>I&apos;m Truong Ngoc Hoa, the developer of TruongNgocHoa. If you like the app, don&apos;t hesitate to give Trương Ngọc Hoà one star on GitHub.</translation>
     </message>
     <message>
         <location line="+35"/>
@@ -1421,10 +1421,10 @@
     </message>
     <message>
         <location line="+22"/>
-        <source>© 2026 Mạch Hồng Hải
-Tác giả và chủ sở hữu TruongNgocHoa.</source>
-        <translation>© 2026 Mach Hong Hai
-Author and owner of TruongNgocHoa.</translation>
+        <source>© 2026 Trương Ngọc Hoà
+Tác giả và chủ sở hữu Trương Ngọc Hoà.</source>
+        <translation>© 2026 Truong Ngoc Hoa
+Author and owner of Truong Ngoc Hoa.</translation>
     </message>
     <message>
         <location line="+10"/>

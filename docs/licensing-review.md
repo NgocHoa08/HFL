@@ -1,12 +1,12 @@
 # Rà soát giấy phép Trương Ngọc Hoà
 
-Ngày 01/10/2026, Mạch Hồng Hải đã duyệt chuyển phần mã Trương Ngọc Hoà thuộc sở hữu
+Ngày 01/10/2026, Trương Ngọc Hoà đã duyệt chuyển phần mã Trương Ngọc Hoà thuộc sở hữu
 sang [Trương Ngọc Hoà Source-Available 1.0](../LICENSE). Giấy phép và [NOTICE](../NOTICE)
 đặt tiếng Việt trước tiếng Anh; tiếng Việt được ưu tiên khi bản dịch khác nhau.
 Đây là quyết định của chủ sở hữu, không phải xác nhận pháp lý của luật sư hay
 chứng nhận bản phát hành đủ điều kiện phân phối.
 
-Trương Ngọc Hoà do Mạch Hồng Hải phát triển. Owner xác nhận chỉ có một người phát triển;
+Trương Ngọc Hoà do Trương Ngọc Hoà phát triển. Owner xác nhận chỉ có một người phát triển;
 không thêm thông báo chung về “Trương Ngọc Hoà contributors” cho phần mã ứng dụng.
 Git identity/contact phù hợp thông tin user nhưng không chứng minh quyền đối
 với tài sản nhập từ ngoài. Không rewrite Git history hay xóa thông báo hợp lệ

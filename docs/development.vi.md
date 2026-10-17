@@ -180,7 +180,7 @@ Tài liệu user nói rõ thao tác, kết quả và cách phục hồi. Tài li
 - [ ] `scripts/test.ps1` đạt.
 - [ ] Không commit model, media, cache, credential hoặc build output.
 
-Mở issue tại [MachHongHai/TruongNgocHoa](https://github.com/NgocHoa08/HFL/issues) nếu cần thống nhất quyết định kiến trúc trước khi code.
+Mở issue tại [NgocHoa08/HFL](https://github.com/NgocHoa08/HFL/issues) nếu cần thống nhất quyết định kiến trúc trước khi code.
 
 ## 16. Gói bộ xử lý độc lập
 

@@ -5,13 +5,13 @@ Trạng thái: nền tảng source đã triển khai và kiểm thử; **chưa s
 ## 24 điểm bàn giao
 
 1. Giấy phép chính tại `LICENSE` đã chuyển sang `LicenseRef-TruongNgocHoa-Source-Available-1.0`, tiếng Việt trước tiếng Anh theo phê duyệt chủ sở hữu.
-2. `NOTICE` ghi Mạch Hồng Hải là tác giả Trương Ngọc Hoà; thông báo độc lập của thành phần bên thứ ba vẫn được bảo toàn.
+2. `NOTICE` ghi Trương Ngọc Hoà là tác giả Trương Ngọc Hoà; thông báo độc lập của thành phần bên thứ ba vẫn được bảo toàn.
 3. README, metadata, hồ sơ pháp lý và kiểm tra hash giấy phép đã đồng bộ; các bản dự thảo được giữ với trạng thái lịch sử, không có hiệu lực.
 4. About không còn đoạn khởi tạo, giấy phép và bên thứ ba; cửa sổ Bản quyền riêng có trong Cài đặt và menu `?`.
 5. Bootstrap chỉ dùng thư viện chuẩn Python; không import Qt hoặc thư viện AI.
 6. Core đặt trong `versions/<version>`; runtime được giữ ngoài Core, tại `runtime`. Không tự chuyển bản cài cũ sang layout mới.
 7. Marker layout bắt buộc, tránh nhận nhầm thư mục hoặc cập nhật nhầm runtime.
-8. Nguồn tải cố định là public release của `MachHongHai/TruongNgocHoa`; không PAT hoặc cấu hình nguồn tùy ý.
+8. Nguồn tải cố định là public release của `NgocHoa08/HFL`; không PAT hoặc cấu hình nguồn tùy ý.
 9. HTTPS, redirect và đường dẫn asset được giới hạn; digest và kích thước được kiểm tra trước sử dụng.
 10. Không Authenticode, Ed25519, RSA hoặc key ký. SHA-256 bảo vệ tính toàn vẹn, **không chứng minh danh tính nhà phát hành** nếu nguồn phát hành bị chiếm quyền.
 11. Manifest schema nghiêm ngặt: sản phẩm, phiên bản, nền tảng, kiến trúc, inventory, added/changed/removed, hash, kích thước và tương thích dữ liệu.

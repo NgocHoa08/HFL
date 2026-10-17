@@ -227,7 +227,7 @@ Dependency or model changes also require [dependency security](dependency-securi
 - [ ] `scripts/test.ps1` passes.
 - [ ] No generated models, media, caches, credentials, or build output are committed.
 
-Open an issue at [MachHongHai/TruongNgocHoa](https://github.com/NgocHoa08/HFL/issues) when an architectural decision needs discussion before implementation.
+Open an issue at [NgocHoa08/HFL](https://github.com/NgocHoa08/HFL/issues) when an architectural decision needs discussion before implementation.
 
 ## 16. External engine packs
 

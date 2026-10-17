@@ -6,9 +6,9 @@ The root `LICENSE` is the active Source-Available 1.0 text, Vietnamese first.
 This earlier proposal is retained for comparison, not application terms.
 
 Proposed identifier: `LicenseRef-TruongNgocHoa-Source-Available-1.0` (custom; not
-OSI-approved). Proposed licensor: Mach Hong Hai, only for rights he owns or is
+OSI-approved). Proposed licensor: Truong Ngoc Hoa, only for rights he owns or is
 expressly authorized to license. Official repository:
-https://github.com/NgocHoa08/HFL. Contact: machhonghaipr@gmail.com.
+https://github.com/NgocHoa08/HFL.
 
 ## 1. Scope and precedence
 
@@ -45,7 +45,7 @@ outside the Service. Independent licenses may separately permit such conduct.
 You may download an authorized application release, install it and use it
 without paying the licensor. Personal, business and monetized video production
 are permitted under the Trương Ngọc Hoà permission. You need not request permission
-from Mach Hong Hai for each upload to YouTube, TikTok, Facebook or another
+from Truong Ngoc Hoa for each upload to YouTube, TikTok, Facebook or another
 platform. This permission does not license other people's media, voices,
 music, trademarks or model outputs; their applicable rights still govern.
 

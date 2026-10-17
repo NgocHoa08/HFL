@@ -9,7 +9,7 @@ needed, exact commit/file scope, agreement version, date and explicit written
 acceptance. Keep personal acceptance records privately; publish only agreed
 attribution and a nonsecret permission reference in the rights inventory.
 
-Proposed grant: the contributor retains ownership and grants Mach Hong Hai a
+Proposed grant: the contributor retains ownership and grants Truong Ngoc Hoa a
 nonexclusive, worldwide, perpetual, royalty-free permission to reproduce,
 modify, build, use, distribute and sublicense the specifically identified
 contribution, including within official Trương Ngọc Hoà releases under the approved

@@ -40,7 +40,7 @@
 #endif
 
 #define AppName "TruongNgocHoa"
-#define AppPublisher "Mach Hong Hai"
+#define AppPublisher "Truong Ngoc Hoa"
 #define AppUrl "https://github.com/NgocHoa08/HFL"
 #ifndef VersionedLayout
   #define VersionedLayout "0"
@@ -70,7 +70,7 @@ AppUpdatesURL={#AppUrl}/releases
 AppVerName={#AppName} {#AppVersion}
 VersionInfoCompany={#AppPublisher}
 VersionInfoDescription={#AppName} Windows installer
-VersionInfoCopyright=Copyright (c) 2026 Mach Hong Hai
+VersionInfoCopyright=Copyright (c) 2026 Truong Ngoc Hoa
 VersionInfoOriginalFileName={#OutputBaseFilename}.exe
 VersionInfoProductName={#AppName}
 VersionInfoVersion={#AppVersion}

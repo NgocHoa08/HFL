@@ -8,7 +8,7 @@ Bản sửa bảo mật được áp dụng cho revision source mới nhất và
 
 ## Báo cáo lỗ hổng
 
-Dùng **Security → Report a vulnerability** trên GitHub để nội dung được giữ riêng tư. Nếu private reporting chưa bật, gửi email tới [machhonghaipr@gmail.com](mailto:machhonghaipr@gmail.com) với tiêu đề `Trương Ngọc Hoà security report`.
+Dùng **Security → Report a vulnerability** trên GitHub tại https://github.com/NgocHoa08/HFL/security/advisories để nội dung được giữ riêng tư.
 
 Hãy ghi phiên bản hoặc commit bị ảnh hưởng, tác động, điều kiện tái hiện và proof of concept tối giản không chứa media riêng tư hoặc credential của bên thứ ba. Không mở issue công khai cho lỗ hổng chưa được vá.
 

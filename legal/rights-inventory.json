@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "status": "owner-confirmed-application-scope",
-  "creator": "Mạch Hồng Hải",
-  "copyright_notice": "Bản quyền (c) 2026 Mạch Hồng Hải",
+  "creator": "Trương Ngọc Hoà",
+  "copyright_notice": "Bản quyền (c) 2026 Trương Ngọc Hoà",
   "notice_scope": "Only work owned by or expressly licensed to this rights holder",
   "exclusive_ownership_verified": false,
   "separate_or_unverified_material": [
@@ -45,7 +45,7 @@
     }
   ],
   "contributor_permission_records": [],
-  "scope_approved_by": "Mạch Hồng Hải",
+  "scope_approved_by": "Trương Ngọc Hoà",
   "scope_approved_at": "2026-10-01",
   "approved_scope": [
     "src/truongngochoa",

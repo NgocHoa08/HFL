@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
   "active_source_license": "LicenseRef-TruongNgocHoa-Source-Available-1.0",
-  "active_license_sha256": "7e8ae75625ced5824ba938d52b245e0128d814c22ff669b09066710c8d348b1c",
+  "active_license_sha256": "8a95ca489c6f3660e656d6edfa1397f0d181d241a8fbe1c0701d2fd1105d16c3",
   "proposed_source_license": "LicenseRef-TruongNgocHoa-Source-Available-1.0",
   "proposal_status": "adopted",
   "owner_approval": {
-    "approved_by": "Mạch Hồng Hải",
+    "approved_by": "Trương Ngọc Hoà",
     "approved_at": "2026-10-01",
     "basis": "Explicit owner approval and request to clarify redistribution and commercial software restrictions",
     "language_precedence": "vi"
@@ -25,11 +25,11 @@
       },
       "omnivoice-noncommercial-checkpoint-and-preview-assets": {
         "path": "legal/reviews/owner-assets-and-omnivoice-2026-10-04.md",
-        "sha256": "fd3764dcb816168e9ec62737823ecf9eca79655e39999b5073779ac927cd7702"
+        "sha256": "82c5375250aa1774fb0d0be28c6576f8e1a2f1695125028ed6d6dc56b9253b4e"
       },
       "ffmpeg-complete-corresponding-source": {
         "path": "legal/reviews/media-source-1.0.1.md",
-        "sha256": "c751fb2a7f16a4d1ec71338990d8f4620a73563a3b56a9bd269efe6cec9c8a06"
+        "sha256": "4baac82dcdfbce505f6da3f99de7d86e65abb9cb0f6fe32d780ca45d1c07db4d"
       },
       "qt-lgpl-module-and-relinking-evidence": {
         "path": "legal/reviews/qt-replacement-2026-10-06.md",

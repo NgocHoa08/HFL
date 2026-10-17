@@ -3,7 +3,7 @@
 **DRAFT — NOT IN FORCE.** These proposed terms are not the installer agreement.
 The current root `LICENSE` and independent component licenses remain in force.
 
-Trương Ngọc Hoà was created by Mach Hong Hai. Official downloads are linked from
+Trương Ngọc Hoà was created by Truong Ngoc Hoa. Official downloads are linked from
 https://github.com/NgocHoa08/HFL/releases and https://truongngochoa.pages.dev/.
 
 1. **Free use.** You may install and run an authorized release without payment

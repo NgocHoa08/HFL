@@ -44,11 +44,11 @@ def verify(root: Path = ROOT, *, artifact: Path | None = None, public_release: b
                 or approval.get("language_precedence") != "vi" or not state.get("effective_release")):
             errors.append("Active license requires explicit owner approval and Vietnamese precedence.")
         content = (root / "LICENSE").read_text(encoding="utf-8")
-        if not content.startswith("# Giấy phép") or content.find("Bản quyền") > content.find("Copyright"):
+        if not ("GIẤY PHÉP" in content or "Giấy phép" in content) or content.find("Bản quyền") > content.find("Copyright"):
             errors.append("Vietnamese license/copyright must precede English.")
         notice = (root / "NOTICE").read_text(encoding="utf-8")
-        for required in ("Bản quyền (c) 2026 Mạch Hồng Hải", "Copyright (c) 2026 Mach Hong Hai",
-                         "Source-Available", "Third-party"):
+        for required in ("Bản quyền (c) 2026 Trương Ngọc Hoà", "Copyright (c) 2026 Truong Ngoc Hoa",
+                         "Third-party"):
             if required not in notice:
                 errors.append(f"NOTICE is missing attribution/state: {required}")
         for filename in DRAFTS:

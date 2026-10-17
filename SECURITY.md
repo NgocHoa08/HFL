@@ -8,7 +8,7 @@ Security fixes are applied to the latest source revision and the latest publishe
 
 ## Report a vulnerability
 
-Use GitHub's **Security → Report a vulnerability** form so details remain private. If private reporting is unavailable, contact [machhonghaipr@gmail.com](mailto:machhonghaipr@gmail.com) with the subject `Trương Ngọc Hoà security report`.
+Use GitHub's **Security → Report a vulnerability** form at https://github.com/NgocHoa08/HFL/security/advisories so details remain private.
 
 Include the affected version or commit, impact, reproduction conditions, and a minimal proof of concept that does not contain third-party private media or credentials. Do not open a public issue for an unpatched vulnerability.
 

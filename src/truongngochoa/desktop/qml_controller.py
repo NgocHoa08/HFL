@@ -214,6 +214,7 @@ class TruongNgocHoaController(QObject):
     # invalidate every Zernio binding on the page.
     tiktokPublishChanged = Signal()
     appAlertRequested = Signal(str, str, str)
+    licenseDialogRequested = Signal()
     resourcePacksRequested = Signal(str)
     geminiSetupRequested = Signal()
     apiKeySettingsRequested = Signal(str)
@@ -513,6 +514,8 @@ class TruongNgocHoaController(QObject):
         self._channel_importer.changed.connect(self.channelImportChanged.emit)
         self._channel_importer.videoReady.connect(self._handle_channel_video_ready)
         self._channel_importer.downloadsFinished.connect(self._finish_channel_import_target)
+        from truongngochoa.desktop.license_controller import LicenseController
+        self._license = LicenseController(self)
 
         if os.getenv("TRUONGNGOCHOA_SMOKE_TEST") == "1":
             self._startup_hardware_resolved = True
@@ -1180,6 +1183,10 @@ class TruongNgocHoaController(QObject):
     @Property(QObject, constant=True)
     def channelImporter(self):
         return self._channel_importer
+
+    @Property(QObject, constant=True)
+    def license(self):
+        return self._license
 
     @Property(QObject, constant=True)
     def mediaDownloader(self):
@@ -3816,10 +3823,14 @@ class TruongNgocHoaController(QObject):
 
     @Slot()
     def startBatch(self):
+        if not self._license.canProcess():
+            return
         TruongNgocHoaController._project_commands_for(self).start_batch()
 
     @Slot()
     def resumeBatch(self):
+        if not self._license.canProcess():
+            return
         TruongNgocHoaController._project_commands_for(self).resume_batch()
 
     def _sync_project_model_defaults(self) -> None:
@@ -4269,10 +4280,14 @@ class TruongNgocHoaController(QObject):
 
     @Slot()
     def startVideo(self):
+        if not self._license.canProcess():
+            return
         TruongNgocHoaController._project_commands_for(self).start_video()
 
     @Slot(result=bool)
     def startProjectVideo(self):
+        if not self._license.canProcess():
+            return False
         return TruongNgocHoaController._project_commands_for(self).start_project_video()
 
     @Slot()
@@ -4281,16 +4296,22 @@ class TruongNgocHoaController(QObject):
 
     @Slot()
     def resumeSelectedVideo(self):
+        if not self._license.canProcess():
+            return
         TruongNgocHoaController._project_commands_for(self).resume_selected_video()
 
     @Slot()
     def restartSelectedVideo(self):
+        if not self._license.canProcess():
+            return
         TruongNgocHoaController._project_commands_for(self).restart_selected_video()
 
     @Slot(str, result=bool)
     def runManualStage(self, stage):
         allowed_stages = {"translation", "subtitles", "voice", "timeline", "render"}
         stage = str(stage or "").strip().lower()
+        if stage == "render" and not self._license.canProcess():
+            return False
         video = self._selected_video()
         if not video or self._project_type != "manual" or video.project_type != "manual":
             self.appAlertRequested.emit("Manual", "Import a video into a Manual project first.", "warning")
@@ -4428,6 +4449,8 @@ class TruongNgocHoaController(QObject):
 
     @Slot(str, str, str, bool, result=bool)
     def exportVideoTo(self, video_id, preset, destination, overwrite):
+        if not self._license.canProcess():
+            return False
         started = self._video_exports.start(video_id, preset, destination, overwrite=overwrite)
         if started:
             self.videoExportStarted.emit()
@@ -4435,6 +4458,8 @@ class TruongNgocHoaController(QObject):
 
     @Slot(str, str, str, bool, str, result=bool)
     def exportVideoSegmentTo(self, video_id, preset, destination, overwrite, segment_id):
+        if not self._license.canProcess():
+            return False
         started = self._video_exports.start(video_id, preset, destination,
             overwrite=overwrite, segment_id=segment_id)
         if started:
@@ -4471,6 +4496,8 @@ class TruongNgocHoaController(QObject):
 
     @Slot(str, "QVariantList", str, str, bool, bool, result=bool)
     def processBatchTo(self, project_key, video_ids, preset, directory, overwrite, process):
+        if not self._license.canProcess():
+            return False
         started = self._video_exports.start_batch_to(
             str(project_key), list(video_ids), str(preset), str(directory), overwrite=bool(overwrite), process=bool(process),
         )

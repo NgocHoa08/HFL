@@ -64,7 +64,7 @@ ApplicationWindow {
     readonly property bool routeCanGoBack: routeHistoryIndex > 0
     readonly property bool routeCanGoForward: routeHistoryIndex < routeHistory.length - 1
     readonly property bool projectWorkspaceVisible: currentRoute === routeSingleWorkspace || currentRoute === routeManualWorkspace || currentRoute === routeBatchWorkspace || currentRoute === routeBatchVideo || currentRoute === routeDownloadWorkspace || currentRoute === routePublishWorkspace
-    readonly property bool globalNavigationBlocked: lazyDialogVisible(projectSetupDialogLoader) || lazyDialogVisible(urlImportDialogLoader) || lazyDialogVisible(downloadProjectSourceDialogLoader) || lazyDialogVisible(batchSettingsDialogLoader) || lazyDialogVisible(translationReviewDialogLoader) || lazyDialogVisible(aboutDialogLoader) || lazyDialogVisible(copyrightDialogLoader) || appAlertDialog.visible || modelSetupOverlayLoader.active
+    readonly property bool globalNavigationBlocked: lazyDialogVisible(projectSetupDialogLoader) || lazyDialogVisible(urlImportDialogLoader) || lazyDialogVisible(downloadProjectSourceDialogLoader) || lazyDialogVisible(batchSettingsDialogLoader) || lazyDialogVisible(translationReviewDialogLoader) || lazyDialogVisible(aboutDialogLoader) || lazyDialogVisible(copyrightDialogLoader) || lazyDialogVisible(licenseDialogLoader) || appAlertDialog.visible || modelSetupOverlayLoader.active
     readonly property bool downloadCanGoBack: routeHost.downloadCanGoBack
     readonly property bool downloadCanGoForward: routeHost.downloadCanGoForward
     readonly property bool canNavigateBack: !globalNavigationBlocked && (downloadCanGoBack || routeCanGoBack)
@@ -333,6 +333,13 @@ ApplicationWindow {
         }
     }
 
+    LazyDialogLoader {
+        id: licenseDialogLoader
+        sourceComponent: Component {
+            LicenseDialog { onClosed: licenseDialogLoader.release() }
+        }
+    }
+
 
     AppAlertDialog {
         id: appAlertDialog
@@ -400,6 +407,10 @@ ApplicationWindow {
 
         function onSettingsChanged() {
             I18n.language = AppController.settingsLanguage;
+        }
+
+        function onLicenseDialogRequested() {
+            licenseDialogLoader.invoke("open", []);
         }
 
         function onAppAlertRequested(title, message, severity) {
@@ -494,6 +505,7 @@ ApplicationWindow {
             onPackagesRequested: root.navigate(root.routePackages)
             onAboutRequested: aboutDialogLoader.invoke("open", [])
             onCopyrightRequested: copyrightDialogLoader.invoke("open", [])
+            onLicenseRequested: licenseDialogLoader.invoke("open", [])
         }
 
         RowLayout {

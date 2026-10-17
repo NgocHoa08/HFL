@@ -20,6 +20,7 @@ Rectangle {
     signal redoRequested
     signal aboutRequested
     signal copyrightRequested
+    signal licenseRequested
     signal backRequested
     signal forwardRequested
     signal homeRequested
@@ -117,6 +118,19 @@ Rectangle {
         }
 
         TopBarMenuButton {
+            id: licenseButton
+            objectName: "appLicenseButton"
+            text: {
+                if (!AppController.license) return qsTr("Bản quyền");
+                if (!AppController.license.licenseActive) return qsTr("Kích hoạt bản quyền");
+                const rem = AppController.license.licenseCreditsRemaining;
+                if (rem >= 0) return qsTr("Bản quyền: %1 lượt").arg(rem);
+                return qsTr("Bản quyền: Hợp lệ");
+            }
+            onClicked: root.licenseRequested()
+        }
+
+        TopBarMenuButton {
             id: updatesButton
             objectName: "appUpdatesButton"
             text: qsTr("Phiên bản mới")
@@ -209,11 +223,16 @@ Rectangle {
         id: helpMenu
         objectName: "helpMenuPopup"
         parent: Overlay.overlay
-        menuContentWidth: Math.max(helpAboutItem.implicitWidth, helpCopyrightItem.implicitWidth)
+        menuContentWidth: Math.max(helpAboutItem.implicitWidth, helpLicenseItem.implicitWidth, helpCopyrightItem.implicitWidth)
         AppMenuItem {
             id: helpAboutItem
             text: qsTr("Giới thiệu")
             onTriggered: root.aboutRequested()
+        }
+        AppMenuItem {
+            id: helpLicenseItem
+            text: qsTr("Quản lý bản quyền")
+            onTriggered: root.licenseRequested()
         }
         AppMenuItem {
             id: helpCopyrightItem
@@ -353,6 +372,11 @@ Rectangle {
 
             text: qsTr("Giới thiệu")
             onTriggered: root.aboutRequested()
+        }
+        AppMenuItem {
+            id: licenseMenuItem
+            text: qsTr("Quản lý bản quyền")
+            onTriggered: root.licenseRequested()
         }
         AppMenuItem {
             id: copyrightItem

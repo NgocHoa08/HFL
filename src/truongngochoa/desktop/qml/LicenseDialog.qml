@@ -36,7 +36,7 @@ AppDialog {
             // 1. HARDWARE ID CARD (MÃ THIẾT BỊ)
             Rectangle {
                 Layout.fillWidth: true
-                radius: Theme.radiusMedium
+                radius: Theme.radius
                 color: Theme.surfaceElevated
                 border.width: 1
                 border.color: Theme.outline
@@ -102,7 +102,7 @@ AppDialog {
                         Layout.fillWidth: true
                         text: qsTr("Mã máy duy nhất cho máy tính này. Khách hàng gửi mã này cho chủ phần mềm để cấp bản quyền.")
                         font.family: Theme.fontFamily
-                        font.pixelSize: TypeScale.meta
+                        font.pixelSize: TypeScale.metadata
                         color: Theme.textSubtle
                         wrapMode: Text.WordWrap
                     }
@@ -112,7 +112,7 @@ AppDialog {
             // 2. LICENSE STATUS CARD (TRẠNG THÁI HIỆN TẠI)
             Rectangle {
                 Layout.fillWidth: true
-                radius: Theme.radiusMedium
+                radius: Theme.radius
                 color: Theme.surfaceElevated
                 border.width: 1
                 border.color: root.license && root.license.licenseActive ? Theme.interactiveOutline : Theme.outline
@@ -184,7 +184,7 @@ AppDialog {
                     GridLayout {
                         Layout.fillWidth: true
                         columns: 2
-                        rowSpacing: Theme.space6
+                        rowSpacing: Theme.space8
                         columnSpacing: Theme.space16
 
                         Text {

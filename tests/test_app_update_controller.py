@@ -176,9 +176,10 @@ class AppUpdateControllerTests(unittest.TestCase):
     def test_release_result_is_applied_on_qt_thread(self):
         host = Host()
         controller = AppUpdateController(host)
+        controller._delta_layout = None
         payload = {
             "tag_name": "v99.0.0",
-            "html_url": "https://github.com/MachHongHai/HaizFlow/releases/tag/v99.0.0",
+            "html_url": "https://github.com/NgocHoa08/HFL/releases/tag/v99.0.0",
             "body": "Release notes",
         }
         with patch(
@@ -194,6 +195,7 @@ class AppUpdateControllerTests(unittest.TestCase):
     def test_unexpected_release_url_is_rejected(self):
         host = Host()
         controller = AppUpdateController(host)
+        controller._delta_layout = None
         payload = {
             "tag_name": "v99.0.0",
             "html_url": "https://example.invalid/download.exe",
@@ -246,7 +248,7 @@ class AppUpdateControllerTests(unittest.TestCase):
     @staticmethod
     def asset(data):
         name = "TruongNgocHoa-99.0.0-Setup.exe"
-        return {"name": name, "browser_download_url": f"https://github.com/MachHongHai/HaizFlow/releases/download/v99.0.0/{name}",
+        return {"name": name, "browser_download_url": f"https://github.com/NgocHoa08/HFL/releases/download/v99.0.0/{name}",
                 "size": len(data), "digest": "sha256:" + hashlib.sha256(data).hexdigest()}
 
     def test_verified_download_opens_installer_on_qt_thread(self):
@@ -302,6 +304,7 @@ class AppUpdateControllerTests(unittest.TestCase):
     def test_source_mode_does_not_launch_or_download_an_installer(self):
         controller = AppUpdateController(Host())
         controller._latest_version = "99.0.0"
+        controller._delta_layout = None
         with patch("truongngochoa.desktop.app_update_controller.sys.frozen", False, create=True):
             self.assertFalse(controller.install())
         self.assertIn("đã cài đặt", controller.error)

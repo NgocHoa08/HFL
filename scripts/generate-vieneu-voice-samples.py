@@ -56,7 +56,7 @@ def main() -> int:
         parser.error("--models-root must be an existing directory; no models are downloaded")
     sys.path.insert(0, str(ROOT / "src"))
     (ROOT / "build").mkdir(exist_ok=True)
-    with tempfile.TemporaryDirectory(prefix="vieneu-samples-", dir=ROOT / "build") as temporary:
+    with tempfile.TemporaryDirectory(prefix="vieneu-samples-", dir=ROOT / "build"):
         os.environ.update(TRUONGNGOCHOA_SMOKE_TEST="1", MODELS_DIR=str(args.models_root.resolve()),
                           HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1")
         from truongngochoa import config
@@ -115,7 +115,8 @@ def main() -> int:
             updated_vieneu.append({**entry, **details})
             print(json.dumps({**entry, **details}, ensure_ascii=False), flush=True)
         manifest["samples"] = [s for s in manifest["samples"] if s.get("provider") != "vieneu"] + updated_vieneu
-        (samples / "samples.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        manifest_text = json.dumps(manifest, ensure_ascii=False, indent=2) + "\n"
+        (samples / "samples.json").write_text(manifest_text, encoding="utf-8")
     return 0
 
 

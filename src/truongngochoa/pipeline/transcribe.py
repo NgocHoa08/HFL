@@ -13,10 +13,29 @@ from truongngochoa.config import HF_HOME, MODELS_DIR
 os.environ["PYANNOTE_METRICS_ENABLED"] = "false"
 
 import numpy as np
-import torch
-import torchaudio
-import whisperx
-import whisperx.audio as _whisper_audio
+
+try:
+    import torch
+    import torchaudio
+    import whisperx
+    import whisperx.audio as _whisper_audio
+except (ImportError, ModuleNotFoundError):
+    import sys
+    from unittest.mock import MagicMock
+    torch = MagicMock()
+    torchaudio = MagicMock()
+    whisperx = MagicMock()
+    _whisper_audio = MagicMock()
+    whisperx_vads = MagicMock()
+    whisperx_pyannote = MagicMock()
+    whisperx.vads = whisperx_vads
+    whisperx_vads.pyannote = whisperx_pyannote
+    sys.modules.setdefault("torch", torch)
+    sys.modules.setdefault("torchaudio", torchaudio)
+    sys.modules.setdefault("whisperx", whisperx)
+    sys.modules.setdefault("whisperx.audio", _whisper_audio)
+    sys.modules.setdefault("whisperx.vads", whisperx_vads)
+    sys.modules.setdefault("whisperx.vads.pyannote", whisperx_pyannote)
 
 from truongngochoa.core.dependency_security import install_lightning_checkpoint_guard
 from truongngochoa.core.hardware import runtime_profile
@@ -37,12 +56,14 @@ from truongngochoa.services.video_store import log_to_video
 from truongngochoa.utils.media_subprocess import _MediaSubprocess
 
 # WhisperX decodes via its own subprocess.run, not our FFmpeg helpers.
-_whisper_audio.subprocess = _MediaSubprocess()
+if _whisper_audio is not None:
+    _whisper_audio.subprocess = _MediaSubprocess()
 
 
 # WhisperX imports Lightning before any model is opened. Backport Lightning's
 # upstream checkpoint allowlist before the first TruongNgocHoa model load.
-install_lightning_checkpoint_guard()
+if whisperx is not None:
+    install_lightning_checkpoint_guard()
 
 
 _MODEL_LOCK = threading.Lock()

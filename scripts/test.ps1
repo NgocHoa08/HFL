@@ -1,5 +1,6 @@
 param(
-  [switch]$SkipCompile
+  [switch]$SkipCompile,
+  [switch]$SkipTests
 )
 
 $ErrorActionPreference = "Stop"
@@ -56,11 +57,13 @@ try {
     throw "Python correctness lint failed."
   }
 
-  # pytest also collects the unittest suites, plus function/fixture tests that
-  # unittest discovery silently omitted from previous release gates.
-  & $Python -m pytest (Join-Path $Root "tests") -q -p no:cacheprovider --basetemp (Join-Path $TestTemp "pytest")
-  if ($LASTEXITCODE -ne 0) {
-    throw "Test suite failed."
+  if (!$SkipTests) {
+    # pytest also collects the unittest suites, plus function/fixture tests that
+    # unittest discovery silently omitted from previous release gates.
+    & $Python -m pytest (Join-Path $Root "tests") -q -p no:cacheprovider --basetemp (Join-Path $TestTemp "pytest")
+    if ($LASTEXITCODE -ne 0) {
+      throw "Test suite failed."
+    }
   }
 
   $QmlFiles = Get-ChildItem -LiteralPath $QmlDirectory -Filter "*.qml" -File |

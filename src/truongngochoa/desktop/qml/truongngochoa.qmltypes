@@ -71,7 +71,29 @@ Module {
         Method { name: "release" }
     }
     Component {
+        name: "LicenseController"
+        prototype: "QObject"
+        accessSemantics: "reference"
+        Signal { name: "licenseStateChanged" }
+        Signal { name: "verificationFinished"; Parameter { name: "success"; type: "bool" } Parameter { name: "message"; type: "string" } }
+        Property { name: "deviceId"; type: "string"; isReadonly: true }
+        Property { name: "licenseKey"; type: "string" }
+        Property { name: "licenseActive"; type: "bool"; isReadonly: true }
+        Property { name: "licensePlan"; type: "string"; isReadonly: true }
+        Property { name: "licenseExpiresAt"; type: "string"; isReadonly: true }
+        Property { name: "licenseCreditsRemaining"; type: "int"; isReadonly: true }
+        Property { name: "licenseCreditsTotal"; type: "int"; isReadonly: true }
+        Property { name: "licenseMessage"; type: "string"; isReadonly: true }
+        Property { name: "isChecking"; type: "bool"; isReadonly: true }
+        Property { name: "supabaseUrl"; type: "string" }
+        Property { name: "supabaseKey"; type: "string" }
+        Method { name: "activateKey"; Parameter { name: "key"; type: "string" } }
+        Method { name: "checkLicense" }
+        Method { name: "saveConfig"; Parameter { name: "url"; type: "string" } Parameter { name: "key"; type: "string" } }
+    }
+    Component {
         name: "TruongNgocHoaController"
+        Property { name: "license"; type: "LicenseController"; isPointer: true; isReadonly: true }
         Property { name: "manualSubtitleModel"; type: "ManualSubtitleModel"; isPointer: true; isReadonly: true }
         Property { name: "subtitleOverlayRenderer"; type: "SubtitleOverlayRenderer"; isPointer: true; isReadonly: true }
         Property { name: "subtitleSampleOverlayRenderer"; type: "SubtitleOverlayRenderer"; isPointer: true; isReadonly: true }

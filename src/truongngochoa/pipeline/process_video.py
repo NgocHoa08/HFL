@@ -52,6 +52,12 @@ def detect_original_subtitle_region(*args, **kwargs):
     return implementation(*args, **kwargs)
 
 
+def read_video_subtitles(*args, **kwargs):
+    from truongngochoa.pipeline.manual_tools import read_video_subtitles as implementation
+
+    return implementation(*args, **kwargs)
+
+
 def transcribe(*args, **kwargs):
     from truongngochoa.pipeline.manual_tools import transcribe as implementation
 
@@ -174,11 +180,28 @@ def _checkpoint_valid(video, name, signature, outputs):
     )
 
 
+def _subtitle_source(video) -> str:
+    """Per-video choice wins if explicitly set; otherwise follow the app-wide setting."""
+    source = getattr(video, "subtitle_source", None)
+    if source in {"ocr", "auto"}:
+        return source
+    try:
+        from truongngochoa.services.desktop_settings import load_settings
+
+        global_pref = str(load_settings().get("subtitle_source") or "audio")
+        if global_pref in {"ocr", "auto"}:
+            return global_pref
+    except Exception:
+        pass
+    return str(source or "audio")
+
+
 def _recognize_for_translation(video, reporter, audio_path, output_path):
+    subtitle_source = _subtitle_source(video)
     signature = _signature(
         _file_state(video.files["video_input"]), video.source_language,
         getattr(video, "speech_recognition_model", "small"), video.enable_audio_separation,
-        TIMING_SOURCE, "recognition-progress-v1",
+        TIMING_SOURCE, "recognition-progress-v1", subtitle_source,
     )
     if (_checkpoint_valid(video, "recognition", signature, [output_path])
             or _recovery_checkpoint_valid(video, "recognition", signature, [output_path])):
@@ -190,6 +213,27 @@ def _recognize_for_translation(video, reporter, audio_path, output_path):
         if isinstance(segments, list) and segments and all(isinstance(row, dict) and row.get("text") for row in segments):
             reporter.update(48, "transcribing", "Reusing completed speech recognition")
             return segments, str(video.checkpoints.get("recognition_language") or segments[0].get("language") or "en")
+    if subtitle_source in {"ocr", "auto"}:
+        reporter.update(24, "transcribing", "Reading subtitles on the video (OCR)")
+        try:
+            segments, language = read_video_subtitles(
+                video.files["video_input"], output_path, video.video_id,
+                os.path.dirname(output_path),
+                region_override=getattr(video, "original_subtitle_region_override", None) or None,
+                source_language=video.source_language,
+                progress_callback=lambda current, total: reporter.update(
+                    24 + (round(24 * current / total) if total else 0), "transcribing",
+                    f"Reading subtitles ({current}/{total} frames)"),
+            )
+        except Exception as exc:
+            if subtitle_source != "auto" or is_cancelled(video.video_id):
+                raise
+            log_to_video(video.video_id, f"No readable on-screen subtitles ({exc}); falling back to speech recognition.")
+        else:
+            video.checkpoints["recognition_language"] = str(language or "en")
+            _mark_checkpoint(video, "recognition", signature)
+            reporter.update(48, "transcribing", f"Read {len(segments)} subtitle sentences")
+            return segments, language
     reporter.update(24, "transcribing", "Preparing Whisper speech recognition")
     result = transcribe(
         audio_path, output_path, video.source_language, video.video_id,
@@ -512,6 +556,7 @@ def _translation_signature(video, video_input: str) -> str:
         "gemini" if using_gemini else "hymt2",
         "gemini-segment-json-v1" if using_gemini else HYMT2_MODEL_REVISION,
         *translation_model_signature_parts(getattr(video, "translation_model", "auto")),
+        *(() if _subtitle_source(video) == "audio" else (f"source-{_subtitle_source(video)}",)),
     )
 
 
@@ -703,10 +748,38 @@ def process_video_sync(
             log_to_video(video_id, "Audio separation disabled. Transcribing from original audio.")
 
         check_cancellation(video_id)
-        _ensure_gpu_available("speech recognition")
-        _segments, detected_language = _recognize_for_translation(
-            video, reporter, transcribe_audio_target, source_segments_json,
-        )
+        if _subtitle_source(video) != "ocr":
+            _ensure_gpu_available("speech recognition")
+        try:
+            _segments, detected_language = _recognize_for_translation(
+                video, reporter, transcribe_audio_target, source_segments_json,
+            )
+        except RuntimeError as exc:
+            exc_str = str(exc).lower()
+            if (
+                transcribe_audio_target != temp_audio_wav
+                and (
+                    "did not return any speech segments" in exc_str
+                    or "found no speech segments" in exc_str
+                    or "không tìm thấy lời thoại" in exc_str
+                )
+            ):
+                log_to_video(
+                    video_id,
+                    "Tách âm thanh (Demucs) không trích xuất được giọng nói rõ ràng (hoặc âm lượng vocals quá nhỏ). "
+                    "Đang tự động chuyển sang nhận dạng trực tiếp từ âm thanh gốc...",
+                )
+                try:
+                    Path(source_segments_json).with_name("recognition-progress.json").unlink(missing_ok=True)
+                except OSError:
+                    pass
+                transcribe_audio_target = temp_audio_wav
+                original_audio_target = temp_audio_wav
+                _segments, detected_language = _recognize_for_translation(
+                    video, reporter, transcribe_audio_target, source_segments_json,
+                )
+            else:
+                raise
 
         if not profile.cuda_available or profile.key == "cuda_low_memory":
             _release_recognition_runtime()

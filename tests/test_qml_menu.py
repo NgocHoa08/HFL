@@ -254,7 +254,7 @@ class QmlMenuTests(unittest.TestCase):
 
         source = ProjectListModel()
         source.set_projects([dict(
-            key="alpha", project_name="Alpha", project_type="manual",
+            key="alpha", project_name="Alpha", project_type="batch",
             video_count=0, status="empty", progress=0, thumbnail_source="",
             updated_at="2026-10-01T13:53:00", video_size="",
         )])
@@ -326,6 +326,13 @@ ApplicationWindow {{
             QTest.keyClick(window, Qt.Key_Escape)
             QTest.qWait(150)
             QTest.mouseClick(window, Qt.LeftButton, Qt.NoModifier, card_center)
+            QTest.qWait(40)
+            detail = window.findChild(QQuickItem, "homeProjectDetail")
+            self.assertTrue(detail.property("visible"))
+            self.assertEqual(detail.property("projectKey"), "alpha")
+            open_button = window.findChild(QQuickItem, "homeProjectOpenButton")
+            open_center = open_button.mapToScene(QPointF(open_button.width() / 2, open_button.height() / 2)).toPoint()
+            QTest.mouseClick(window, Qt.LeftButton, Qt.NoModifier, open_center)
             self.assertTrue(window.property("projectOpened"))
         finally:
             window.close()

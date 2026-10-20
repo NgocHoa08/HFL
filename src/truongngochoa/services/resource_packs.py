@@ -1058,10 +1058,13 @@ class ResourcePackManager:
             environment = os.environ.copy()
             environment.update({
                 "TRUONGNGOCHOA_HOME": smoke,
+                "HAIZFLOW_HOME": smoke,
                 "RUNTIME_DATA_DIR": str(smoke_root / "data"),
                 "MODELS_DIR": str(smoke_root / "models"),
                 "TRUONGNGOCHOA_TMP_DIR": str(smoke_root / "tmp"),
+                "HAIZFLOW_TMP_DIR": str(smoke_root / "tmp"),
                 "TRUONGNGOCHOA_SMOKE_TEST": "1",
+                "HAIZFLOW_SMOKE_TEST": "1",
             })
             process = subprocess.Popen(
                 [str(executable), *command[1:]],

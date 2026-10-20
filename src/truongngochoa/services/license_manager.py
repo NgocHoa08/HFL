@@ -231,6 +231,39 @@ def deactivate_license() -> None:
     save_local_license(state)
 
 
+def is_license_valid() -> tuple[bool, str]:
+    """Check if local license is active and valid without consuming usage credit."""
+    cfg = load_server_config()
+    if not cfg.get("supabase_url") or not cfg.get("supabase_key"):
+        return True, "Chưa bật cấu hình máy chủ kiểm soát."
+
+    current = load_local_license()
+    key = current.get("license_key", "").strip()
+    if not key or not current.get("is_active"):
+        return False, "Vui lòng kích hoạt bản quyền để sử dụng tính năng này."
+
+    expires_at = current.get("expires_at")
+    if expires_at:
+        try:
+            exp_clean = str(expires_at).replace("Z", "+00:00")
+            exp_dt = datetime.fromisoformat(exp_clean)
+            if exp_dt.tzinfo is None:
+                exp_dt = exp_dt.replace(tzinfo=timezone.utc)
+            if datetime.now(timezone.utc) > exp_dt:
+                current["is_active"] = False
+                current["status_message"] = "Bản quyền đã hết hạn."
+                save_local_license(current)
+                return False, "Bản quyền đã hết hạn. Vui lòng gia hạn thêm."
+        except Exception:
+            pass
+
+    credits = current.get("credits_remaining")
+    if credits is not None and int(credits) <= 0:
+        return False, "Bạn đã hết số lượt xử lý video. Vui lòng nạp thêm lượt."
+
+    return True, "Hợp lệ."
+
+
 def consume_usage_credit() -> tuple[bool, str]:
     """Deduct 1 credit or verify active subscription before heavy video processing.
     

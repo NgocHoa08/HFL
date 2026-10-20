@@ -85,6 +85,7 @@ Item {
             delegate: ProjectCard {
                 id: projectCard
                 onRenameRequested: key => AppController.requestProjectRename(key)
+                onMoveToProjectRequested: key => AppController.requestMoveToProject(key)
                 width: projectGrid.cardWidth
                 height: projectGrid.cardHeight
                 onActivated: {

@@ -3,6 +3,9 @@ LazyDialogLoader 1.0 LazyDialogLoader.qml
 DeferredActionButton 1.0 DeferredActionButton.qml
 SrtExportDialog 1.0 SrtExportDialog.qml
 SrtImportDialog 1.0 SrtImportDialog.qml
+MoveToProjectDialog 1.0 MoveToProjectDialog.qml
+ProjectPublishDetail 1.0 ProjectPublishDetail.qml
+VideoSplitDialog 1.0 VideoSplitDialog.qml
 typeinfo truongngochoa.qmltypes
 singleton Theme 1.0 Theme.qml
 singleton I18n 1.0 I18n.qml

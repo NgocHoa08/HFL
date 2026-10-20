@@ -117,3 +117,27 @@ def test_license_controller_bindings(tmp_path, monkeypatch):
     assert ctrl.serverConfigured is True
     assert ctrl.supabaseUrl == "https://example.supabase.co"
     assert ctrl.supabaseKey == "anon-key"
+
+
+def test_is_license_valid(tmp_path, monkeypatch):
+    monkeypatch.setattr(license_manager, "LICENSE_FILE", tmp_path / "license.json")
+    monkeypatch.setattr(license_manager, "SERVER_CONFIG_FILE", tmp_path / "license-server.json")
+    license_manager.save_server_config("https://sample.supabase.co", "key-123")
+
+    # Inactive license
+    allowed, msg = license_manager.is_license_valid()
+    assert allowed is False
+
+    # Active valid license
+    license_manager.save_local_license({
+        "license_key": "VALID-KEY",
+        "is_active": True,
+        "credits_remaining": 5,
+    })
+    allowed, msg = license_manager.is_license_valid()
+    assert allowed is True
+
+    mock_host = MagicMock()
+    ctrl = LicenseController(mock_host)
+    assert ctrl.ensureLicenseActive() is True
+

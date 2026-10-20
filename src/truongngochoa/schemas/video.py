@@ -10,6 +10,8 @@ TranslatorProvider = Literal["hymt2", "gemini"]
 TranslationModel = Literal["auto", "q4", "full", "gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.8-flash"]
 TTSProvider = Literal["omnivoice", "omnivoice-gpu", "edge", "vieneu", "vieneu-gpu"]
 SpeechRecognitionModel = Literal["small", "small-cpu", "small-gpu", "large-v3-turbo"]
+# "audio" transcribes speech; "ocr" reads burned-in subtitles; "auto" tries OCR then audio.
+SubtitleSource = Literal["audio", "ocr", "auto"]
 OutputFormat = Literal["keep_ratio", "tiktok_9_16_crop", "blur_background_9_16"]
 ProjectType = Literal["single", "manual", "batch"]
 OriginalSubtitleRemovalMode = Literal["blur", "patch"]
@@ -83,6 +85,7 @@ class VideoConfig(BaseModel):
     target_language: str = "vi"
     translator_provider: TranslatorProvider = "hymt2"
     speech_recognition_model: SpeechRecognitionModel = "small"
+    subtitle_source: SubtitleSource = "audio"
     translation_model: TranslationModel = "q4"
     tts_provider: TTSProvider = "omnivoice"
     tts_voice: str = "omnivoice:female"
@@ -144,6 +147,7 @@ class VideoInfo(BaseModel):
     subtitle_language: str = ""
     translator_provider: TranslatorProvider = "hymt2"
     speech_recognition_model: SpeechRecognitionModel = "small"
+    subtitle_source: SubtitleSource = "audio"
     translation_model: TranslationModel = "q4"
     tts_provider: TTSProvider = "omnivoice"
     tts_voice: str

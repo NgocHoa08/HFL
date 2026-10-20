@@ -122,6 +122,17 @@ class LicenseController(QObject):
             self._host.appAlertRequested.emit("Đã sao chép", f"Đã sao chép mã máy: {self.licenseHwid}", "info")
 
     @Slot(result=bool)
+    def ensureLicenseActive(self) -> bool:
+        """Check the license without consuming a usage credit."""
+        allowed, msg = license_manager.is_license_valid()
+        if not allowed:
+            self._host.appAlertRequested.emit("Bản quyền yêu cầu", msg, "warning")
+            if hasattr(self._host, "licenseDialogRequested"):
+                self._host.licenseDialogRequested.emit()
+            return False
+        return True
+
+    @Slot(result=bool)
     def canProcess(self) -> bool:
         allowed, msg = license_manager.consume_usage_credit()
         self._state = license_manager.load_local_license()

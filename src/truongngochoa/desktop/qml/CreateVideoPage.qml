@@ -34,6 +34,7 @@ Item {
         PageHeader {
             Layout.fillWidth: true
             title: AppController.projectName || qsTr("Xử lý video")
+            subtitle: root.editingBatchVideo ? qsTr("Dự án: %1 · Đang làm video").arg(AppController.projectName) : ""
 
             Text {
                 visible: root.editingBatchVideo
@@ -98,6 +99,7 @@ Item {
                     compact: true
                     onRequestUrlImport: root.requestUrlImport()
                     onRequestDownloadProjectImport: root.requestDownloadProjectImport()
+                    onRequestReviewTranslation: root.requestReviewTranslation()
                 }
 
                 DubbingSetupPanel {

@@ -6,7 +6,7 @@ import re
 import shutil
 import threading
 import uuid
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 from PySide6.QtCore import Property, QEvent, QEventLoop, QObject, QTimer, QUrl, Signal, Slot
@@ -58,6 +58,7 @@ from truongngochoa.desktop.models import (
     SocialProjectSourceListModel,
     SocialPublishListModel,
     VideoListModel,
+    presentation_video_status,
 )
 from truongngochoa.desktop.presenters import (
     build_project_summaries,
@@ -67,6 +68,7 @@ from truongngochoa.desktop.presenters import (
     stage_label,
     voice_options_for_language,
 )
+from truongngochoa.desktop import project_publish_overview
 from truongngochoa.desktop.preview_media_controller import PreviewMediaController
 from truongngochoa.desktop.processing_lifecycle_controller import ProcessingLifecycleController
 from truongngochoa.desktop.project_commands_controller import ProjectCommandsController
@@ -77,10 +79,12 @@ from truongngochoa.desktop.runtime_device_controller import RuntimeDeviceControl
 from truongngochoa.desktop.settings_controller import SettingsController
 from truongngochoa.desktop.smart_warmup_controller import SmartWarmupController
 from truongngochoa.desktop.social_publish_controller import SocialPublishController
+from truongngochoa.services import social_publish as tiktok_publish
 from truongngochoa.desktop.subtitle_overlay_renderer import SubtitleOverlayRenderer
 from truongngochoa.desktop.url_import import ProjectUrlImportRegistry
 from truongngochoa.desktop.voice_clone_recorder import VoiceCloneRecorder
 from truongngochoa.desktop.video_export_controller import VideoExportController
+from truongngochoa.desktop.video_split_controller import VideoSplitController
 from truongngochoa.pipeline.process_registry import pause_video
 from truongngochoa.schemas.editor import (
     EditorClip,
@@ -157,6 +161,7 @@ class TruongNgocHoaController(QObject):
     videoThumbnailChanged = Signal()
     targetLanguageChanged = Signal()
     speechRecognitionModelChanged = Signal()
+    subtitleSourceChanged = Signal()
     translationModelChanged = Signal()
     speechRecognitionModelOptionsChanged = Signal()
     ttsProviderChanged = Signal()
@@ -202,6 +207,7 @@ class TruongNgocHoaController(QObject):
     projectSetupChanged = Signal()
     projectPrepared = Signal()
     projectRenameRequested = Signal(str, str)
+    moveToProjectRequested = Signal(str)
     urlImportFinished = Signal()
     channelImportChanged = Signal()
     mediaImportChanged = Signal()
@@ -244,6 +250,7 @@ class TruongNgocHoaController(QObject):
     resourcePacksChanged = Signal()
     appUpdateChanged = Signal()
     appUpdateAvailable = Signal()
+    videoSplitRequested = Signal()
 
     def __init__(self):
         super().__init__()
@@ -428,6 +435,7 @@ class TruongNgocHoaController(QObject):
         self._catalog_media = CatalogMediaController(self)
         self._diagnostics = DiagnosticsController(self)
         self._runtime_device = RuntimeDeviceController(self)
+        self._video_splitter = VideoSplitController(self)
         settings = desktop_settings.load_settings()
         self._settings_theme = settings["theme"]
         self._settings_language = settings["language"]
@@ -468,6 +476,7 @@ class TruongNgocHoaController(QObject):
             signal.connect(self.appUpdateChanged.emit)
         self._smart_warmup = SmartWarmupController(self, self._resource_packs.manager)
         self.selectedVideoChanged.connect(self._smart_warmup.request_project_prediction)
+        self.selectedVideoChanged.connect(self.subtitleSourceChanged.emit)
         self.speechRecognitionModelChanged.connect(self._smart_warmup.request_setup_prediction)
         self.settingsChanged.connect(self._sync_project_model_defaults)
         self.settingsChanged.connect(self.speechRecognitionModelOptionsChanged.emit)
@@ -524,8 +533,8 @@ class TruongNgocHoaController(QObject):
         else:
             # Render Home first. Optional engines and models warm in their own
             # low-priority worker only after the Qt event loop is responsive.
-            QTimer.singleShot(1250, self._start_smart_warmup_after_hardware)
-            QTimer.singleShot(2500, lambda: self._app_updates.check(manual=False))
+            QTimer.singleShot(1250, self, self._start_smart_warmup_after_hardware)
+            QTimer.singleShot(2500, self, lambda: (self._app_updates.check(manual=False) if getattr(self, "_app_updates", None) else None))
             # Smart warm-up is speculative, never a prerequisite for a user
             # command. Foreground work either reuses the resident model or
             # preempts the prediction and starts with the installed engine.
@@ -1189,6 +1198,10 @@ class TruongNgocHoaController(QObject):
         return self._license
 
     @Property(QObject, constant=True)
+    def videoSplit(self):
+        return self._video_splitter
+
+    @Property(QObject, constant=True)
     def mediaDownloader(self):
         return self._media_downloader
 
@@ -1408,6 +1421,34 @@ class TruongNgocHoaController(QObject):
     @Property(bool, notify=ttsProviderOptionsChanged)
     def gpuModelsAvailable(self):
         return TruongNgocHoaController._heavy_gpu_models_available(self)
+
+    @Property(str, notify=subtitleSourceChanged)
+    def subtitleSource(self):
+        from truongngochoa.services import desktop_settings
+        from truongngochoa.services import video_store
+
+        selected_id = getattr(self, "selectedVideoId", "")
+        if selected_id:
+            video = video_store.get_video(selected_id)
+            if video and getattr(video, "subtitle_source", None):
+                return video.subtitle_source
+        return desktop_settings.load_settings().get("subtitle_source", "audio")
+
+    @subtitleSource.setter
+    def subtitleSource(self, value):
+        from truongngochoa.services import desktop_settings
+        from truongngochoa.services import video_store
+
+        requested = str(value or "audio").strip().lower()
+        if requested not in {"audio", "ocr", "auto"}:
+            requested = "audio"
+        desktop_settings.save_settings({"subtitle_source": requested})
+        selected_id = getattr(self, "selectedVideoId", "")
+        if selected_id:
+            video_store.update_video(selected_id, subtitle_source=requested)
+        if requested in {"ocr", "auto"}:
+            self.removeOriginalSubtitles = True
+        self.subtitleSourceChanged.emit()
 
     @Property(str, notify=speechRecognitionModelChanged)
     def speechRecognitionModel(self):
@@ -3414,6 +3455,119 @@ class TruongNgocHoaController(QObject):
     def renameProject(self, key, name):
         return TruongNgocHoaController._project_commands_for(self).rename_project(str(key), str(name))
 
+    @Slot(str)
+    def requestMoveToProject(self, key: str):
+        self.moveToProjectRequested.emit(str(key or ""))
+
+    @Slot(str, result="QVariantList")
+    def getMoveTargetProjects(self, source_project_key: str = "") -> list[dict]:
+        targets = []
+        all_videos = video_store.list_videos()
+        for p in project_store.list_projects():
+            if project_store.normalize_project_type(p.get("project_type")) != "batch":
+                continue
+            key = str(p.get("key") or "")
+            if key == source_project_key:
+                continue
+            count = sum(1 for v in all_videos if self._video_project_key(v) == key)
+            targets.append({
+                "key": key,
+                "name": p.get("project_name", ""),
+                "video_count": count,
+                "displayText": f"{p.get('project_name', '')} ({count} video)",
+            })
+        return targets
+
+    @Slot(str, result="QVariantList")
+    def getMoveCandidateVideos(self, source_project_key: str = "") -> list[dict]:
+        candidates = []
+        source_key = str(source_project_key or "")
+        all_videos = video_store.list_videos()
+        for v in all_videos:
+            if v.status == "processing":
+                continue
+            v_key = self._video_project_key(v)
+            is_source = bool(source_key and v_key == source_key)
+            candidates.append({
+                "videoId": v.video_id,
+                "title": v.project_name or os.path.splitext(v.original_filename)[0],
+                "filename": v.original_filename,
+                "projectName": v.project_name or "",
+                "projectKey": v_key,
+                "projectType": getattr(v, "project_type", "single"),
+                "thumbnailSource": VideoListModel._thumbnail_source(v),
+                "status": v.status,
+                "videoSize": VideoListModel._video_size(v),
+                "selected": is_source,
+                "isSource": is_source,
+                "createdAt": getattr(v, "created_at", "") or v.updated_at,
+            })
+        source_items = [c for c in candidates if c["isSource"]]
+        other_items = [c for c in candidates if not c["isSource"]]
+        source_items.sort(key=lambda item: item["createdAt"], reverse=True)
+        other_items.sort(key=lambda item: item["createdAt"], reverse=True)
+        return source_items + other_items
+
+    @staticmethod
+    def _rendered_output_path(video) -> str:
+        from truongngochoa.services.video_export import completed_render
+
+        record = completed_render(video, verify=False)
+        return str(record["resolved_outputs"]["video"]) if record else ""
+
+    def _batch_videos_snapshot(self) -> list:
+        catalog = getattr(self, "_catalog_videos", None)
+        videos = list(catalog.values()) if catalog else video_store.list_videos()
+        return [video for video in videos if getattr(video, "project_type", "") == "batch"]
+
+    @Slot(result="QVariantMap")
+    def batchPublishCounts(self) -> dict:
+        """Published/pending/failed/unpublished video counts per batch project key."""
+        states = project_publish_overview.collect_publish_states()
+        return project_publish_overview.counts_by_project(
+            self._batch_videos_snapshot(),
+            self._video_project_key,
+            TruongNgocHoaController._rendered_output_path,
+            states,
+        )
+
+    @Slot(str, result="QVariantList")
+    def projectVideosPublishState(self, project_key: str = "") -> list[dict]:
+        """Videos of one batch project, in queue order, with their publish state."""
+        key = str(project_key or "")
+        states = project_publish_overview.collect_publish_states()
+        videos = [video for video in self._batch_videos_snapshot() if self._video_project_key(video) == key]
+        videos.sort(
+            key=lambda video: (
+                0 if int(getattr(video, "batch_import_order", 0) or 0) > 0 else 1,
+                int(getattr(video, "batch_import_order", 0) or 0),
+                str(getattr(video, "created_at", "")),
+            )
+        )
+        rows = []
+        for video in videos:
+            rows.append({
+                "videoId": video.video_id,
+                "title": video.project_name or os.path.splitext(video.original_filename)[0],
+                "filename": video.original_filename,
+                "thumbnailSource": VideoListModel._thumbnail_source(video),
+                "videoSize": VideoListModel._video_size(video),
+                "status": presentation_video_status(video),
+                "publishState": project_publish_overview.video_publish_state(
+                    video, TruongNgocHoaController._rendered_output_path, states
+                ),
+            })
+        return rows
+
+
+    @Slot(str, "QVariantList", str, result=bool)
+    def moveVideosToProject(self, target_project_key: str, video_ids: list, new_project_name: str = "") -> bool:
+        return TruongNgocHoaController._project_commands_for(self).move_videos_to_batch_project(
+            target_project_key=str(target_project_key or ""),
+            video_ids=[str(x) for x in (video_ids or [])],
+            new_project_name=str(new_project_name or ""),
+        )
+
     @Property(str, notify=projectSetupChanged)
     def projectType(self):
         return self._project_type
@@ -3708,6 +3862,8 @@ class TruongNgocHoaController(QObject):
 
     @Slot("QVariantList")
     def installResourcePacks(self, pack_ids):
+        if not TruongNgocHoaController._can_process_license(self, consume=False):
+            return
         self._resource_packs.installResourcePacks(pack_ids)
 
     @Slot(str)
@@ -3822,9 +3978,13 @@ class TruongNgocHoaController(QObject):
         )
 
     @staticmethod
-    def _can_process_license(target) -> bool:
+    def _can_process_license(target, consume: bool = True) -> bool:
         lic = getattr(target, "_license", None)
-        return lic.canProcess() if lic is not None else True
+        if lic is None:
+            return True
+        if consume:
+            return lic.canProcess()
+        return lic.ensureLicenseActive()
 
     @Slot()
     def startBatch(self):
@@ -4406,6 +4566,8 @@ class TruongNgocHoaController(QObject):
 
     @Slot()
     def requestAutoProcessing(self):
+        if not TruongNgocHoaController._can_process_license(self):
+            return
         video = self._selected_video()
         if (video and video.project_type in {"single", "batch"} and not self.videoExportBusy
                 and not self._processing_queue.contains(video.video_id)):
@@ -4413,6 +4575,8 @@ class TruongNgocHoaController(QObject):
 
     @Slot(str, str, str, bool, result=bool)
     def processVideoTo(self, video_id, preset, destination, overwrite):
+        if not TruongNgocHoaController._can_process_license(self):
+            return False
         if str(video_id) != str(self._selected_video_id or ""):
             return False
         started = self._video_exports.start(video_id, preset, destination, overwrite=overwrite, process=True)
@@ -4477,6 +4641,8 @@ class TruongNgocHoaController(QObject):
 
     @Slot(result=bool)
     def exportBatchVideos(self):
+        if not TruongNgocHoaController._can_process_license(self):
+            return False
         if self._batch_video_ids and not self.isBatchRunning and not self.videoExportBusy:
             self.batchProcessingRequested.emit(False)
             return True
@@ -4484,6 +4650,8 @@ class TruongNgocHoaController(QObject):
 
     @Slot()
     def requestBatchProcessing(self):
+        if not TruongNgocHoaController._can_process_license(self):
+            return
         if self._batch_video_ids and not self.isBatchRunning and not self.videoExportBusy:
             self.batchProcessingRequested.emit(True)
 
@@ -4550,6 +4718,8 @@ class TruongNgocHoaController(QObject):
     @Slot(str, result=bool)
     @Slot(str, bool, result=bool)
     def runManualTool(self, tool_id, force_rerun=False):
+        if not TruongNgocHoaController._can_process_license(self):
+            return False
         if getattr(getattr(self, "_resource_packs", None), "storageMoving", False):
             self.appAlertRequested.emit("Đang chuyển gói tài nguyên", "Hãy chờ chuyển vị trí hoàn tất trước khi xử lý.", "info")
             return False
@@ -6777,9 +6947,14 @@ class TruongNgocHoaController(QObject):
     def saveTikTokPublishDefaults(self, caption: str, hashtags: str, apply_to_existing: bool):
         return self._tiktok_publisher.save_defaults(caption, hashtags, apply_to_existing)
 
+    @Slot(int, str, str, str, result=bool)
     @Slot(int, str, str, result=bool)
-    def updateTikTokPublishItem(self, row: int, caption: str, hashtags: str):
-        return self._tiktok_publisher.update_item(row, caption, hashtags)
+    def updateTikTokPublishItem(self, row: int, caption: str, hashtags: str, scheduled_for: str = ""):
+        return self._tiktok_publisher.update_item(row, caption, hashtags, scheduled_for=scheduled_for)
+
+    @Slot(int, str, result=bool)
+    def scheduleTikTokPublishItem(self, row: int, scheduled_for: str):
+        return self._tiktok_publisher.schedule_item(row, scheduled_for)
 
     @Slot(str, result=bool)
     def saveZernioApiKey(self, api_key: str):
@@ -6845,6 +7020,10 @@ class TruongNgocHoaController(QObject):
     def reconcileZernioConnections(self):
         return self._tiktok_publisher.reconcile_accounts()
 
+    @Slot()
+    def openVideoSplit(self):
+        self.videoSplitRequested.emit()
+
     @Slot(int, result=bool)
     def selectZernioTikTokAccount(self, index: int):
         return self._tiktok_publisher.select_account(index)
@@ -6888,6 +7067,10 @@ class TruongNgocHoaController(QObject):
     def publishTikTokItem(self, row: int):
         return self._tiktok_publisher.publish_item(row)
 
+    @Slot(int, str, result=bool)
+    def publishTikTokItemScheduled(self, row: int, scheduled_for: str):
+        return self._tiktok_publisher.publish_item_scheduled(row, scheduled_for)
+
     @Slot(result=bool)
     def publishNextTikTokItem(self):
         return self._tiktok_publisher.publish_next()
@@ -6895,6 +7078,28 @@ class TruongNgocHoaController(QObject):
     @Slot(result=bool)
     def publishAllTikTokItems(self):
         return self._tiktok_publisher.publish_all()
+
+    @Slot(str, int, result=bool)
+    @Slot(str, result=bool)
+    @Slot(result=bool)
+    def scheduleAndPublishAll(self, start_time: str = "", interval_minutes: int = 30):
+        return self._tiktok_publisher.schedule_and_publish_all(start_time, interval_minutes)
+
+    @Slot(int, result=str)
+    def getLocalTimePlusHours(self, hours: int) -> str:
+        dt = datetime.now() + timedelta(hours=max(0, hours))
+        return dt.strftime("%Y-%m-%d %H:%M")
+
+    @Slot(int, int, int, result=str)
+    def getPresetTime(self, day_offset: int, hour: int, minute: int) -> str:
+        dt = (datetime.now() + timedelta(days=max(0, day_offset))).replace(
+            hour=max(0, min(23, hour)), minute=max(0, min(59, minute)), second=0, microsecond=0
+        )
+        return dt.strftime("%Y-%m-%d %H:%M")
+
+    @Slot(str, result=str)
+    def formatLocalTime(self, utc_iso: str) -> str:
+        return tiktok_publish.format_local_scheduled_time(utc_iso)
 
     @Slot(result=bool)
     def refreshTikTokPostStatuses(self):
@@ -6931,6 +7136,13 @@ class TruongNgocHoaController(QObject):
     @Slot()
     def refreshVideos(self):
         TruongNgocHoaController._project_workspace_for(self).refresh_videos()
+
+    @Slot()
+    def refreshVideosIfChanged(self):
+        # Navigation hook: apply only incremental catalog changes. A full
+        # refresh reads every project from disk and rebuilds six models on the
+        # GUI thread, which made every tab switch stall.
+        TruongNgocHoaController.poll_videos(self)
 
     def _apply_video_metadata_changes(self, video_ids: set[str]) -> bool:
         return TruongNgocHoaController._project_workspace_for(self).apply_video_metadata_changes(video_ids)

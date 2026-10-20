@@ -21,9 +21,11 @@ Rectangle {
     required property string platformPostUrl
     required property bool platformPostUrlVerified
     required property string targetPlatform
+    required property string scheduledFor
+    required property string scheduledForDisplay
 
     signal editRequested()
-    signal publishRequested()
+    signal publishRequested(string itemScheduledFor)
 
     readonly property bool hasRemotePost: zernioPostId.length > 0
     readonly property bool published: publishStatus === "published" || publishStatus === "posted"
@@ -45,7 +47,8 @@ Rectangle {
             : publishStatus === "queued" || publishStatus === "pending" ? qsTr("Đang chờ lượt đăng")
             : qsTr("Đang chờ nền tảng"))
         : publishStatus === "failed" || publishStatus === "partial" ? qsTr("Lỗi")
-        : publishStatus === "scheduled" ? qsTr("Đã hẹn giờ")
+        : publishStatus === "scheduled" ? (root.scheduledForDisplay.length > 0 ? qsTr("Đã hẹn: %1").arg(root.scheduledForDisplay) : qsTr("Đã hẹn giờ"))
+        : root.scheduledForDisplay.length > 0 ? qsTr("Hẹn giờ: %1 (Tự động đăng khi đến giờ)").arg(root.scheduledForDisplay)
         : publishStatus === "missing" ? qsTr("Thiếu tệp") : ""
 
     implicitHeight: 64
@@ -112,7 +115,9 @@ Rectangle {
             visible: root.statusLabel.length > 0
             text: root.statusLabel
             color: root.publishStatus === "failed" || root.publishStatus === "partial"
-                || root.publishStatus === "missing" ? Theme.danger : Theme.textMuted
+                || root.publishStatus === "missing" ? Theme.danger
+                : (root.publishStatus === "scheduled" || root.scheduledForDisplay.length > 0) ? Theme.accent
+                : Theme.textMuted
             font.family: Theme.fontFamily
             font.pixelSize: TypeScale.metadata
             textFormat: Text.PlainText
@@ -137,7 +142,9 @@ Rectangle {
         StudioButton {
             objectName: "socialPostButton"
             text: root.published ? (root.awaitingUrl ? qsTr("Đang hoàn tất") : qsTr("Mở bài đăng"))
-                : root.publishStatus === "failed" || root.publishStatus === "partial" ? qsTr("Đăng lại") : qsTr("Đăng")
+                : root.publishStatus === "scheduled" ? qsTr("Đã lên lịch")
+                : root.publishStatus === "failed" || root.publishStatus === "partial" ? qsTr("Đăng lại")
+                : (root.scheduledForDisplay.length > 0 ? qsTr("Đăng ngay") : qsTr("Đăng"))
             variant: root.published ? "secondary" : "primary"
             enabled: root.published
                 ? root.platformPostUrlVerified && root.platformPostUrl.length > 0
@@ -146,7 +153,7 @@ Rectangle {
                 if (root.published)
                     AppController.openTikTokPublishedPost(root.index)
                 else
-                    root.publishRequested()
+                    root.publishRequested(root.scheduledFor)
             }
         }
 
@@ -193,6 +200,13 @@ Rectangle {
         AppMenuItem {
             text: qsTr("Chỉnh nội dung")
             iconGlyph: IconCatalog.glyph("edit")
+            collapsed: root.published || root.publishStatus === "scheduled"
+            enabled: !root.working
+            onTriggered: root.editRequested()
+        }
+        AppMenuItem {
+            text: qsTr("Hẹn giờ đăng")
+            iconGlyph: "\uE823"
             collapsed: root.published || root.publishStatus === "scheduled"
             enabled: !root.working
             onTriggered: root.editRequested()

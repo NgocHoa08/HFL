@@ -580,6 +580,8 @@ class SocialPublishListModel(QAbstractListModel):
     PlatformUrlRole = Qt.ItemDataRole.UserRole + 12
     TargetPlatformRole = Qt.ItemDataRole.UserRole + 13
     PlatformUrlVerifiedRole = Qt.ItemDataRole.UserRole + 14
+    ScheduledForRole = Qt.ItemDataRole.UserRole + 15
+    ScheduledForDisplayRole = Qt.ItemDataRole.UserRole + 16
 
     _ROLE_FIELDS = {
         ItemIdRole: "id",
@@ -596,6 +598,8 @@ class SocialPublishListModel(QAbstractListModel):
         PlatformUrlRole: "platform_post_url",
         TargetPlatformRole: "target_platform",
         PlatformUrlVerifiedRole: "platform_post_url_verified",
+        ScheduledForRole: "scheduled_for",
+        ScheduledForDisplayRole: "scheduled_for_display",
     }
 
     def __init__(self):
@@ -610,20 +614,22 @@ class SocialPublishListModel(QAbstractListModel):
             return None
         item = self._items[index.row()]
         return {
-            self.ItemIdRole: item["id"],
-            self.FileNameRole: item["file_name"],
-            self.FilePathRole: item["file_path"],
-            self.CaptionRole: item["caption"],
-            self.HashtagsRole: item["hashtags"],
-            self.PostTextRole: item["post_text"],
-            self.StatusRole: item["status"],
-            self.ErrorRole: item["error"],
-            self.ThumbnailRole: item["thumbnail_source"],
+            self.ItemIdRole: item.get("id", ""),
+            self.FileNameRole: item.get("file_name", ""),
+            self.FilePathRole: item.get("file_path", ""),
+            self.CaptionRole: item.get("caption", ""),
+            self.HashtagsRole: item.get("hashtags", ""),
+            self.PostTextRole: item.get("post_text", ""),
+            self.StatusRole: item.get("status", "ready"),
+            self.ErrorRole: item.get("error", ""),
+            self.ThumbnailRole: item.get("thumbnail_source", ""),
             self.ProgressRole: item.get("upload_progress", 0),
             self.PostIdRole: item.get("zernio_post_id", ""),
             self.PlatformUrlRole: item.get("platform_post_url", ""),
             self.TargetPlatformRole: item.get("target_platform", ""),
             self.PlatformUrlVerifiedRole: bool(item.get("platform_post_url_verified", False)),
+            self.ScheduledForRole: item.get("scheduled_for", ""),
+            self.ScheduledForDisplayRole: item.get("scheduled_for_display", ""),
         }.get(role)
 
     def roleNames(self):
@@ -642,6 +648,8 @@ class SocialPublishListModel(QAbstractListModel):
             self.PlatformUrlRole: b"platformPostUrl",
             self.TargetPlatformRole: b"targetPlatform",
             self.PlatformUrlVerifiedRole: b"platformPostUrlVerified",
+            self.ScheduledForRole: b"scheduledFor",
+            self.ScheduledForDisplayRole: b"scheduledForDisplay",
         }
 
     def set_items(self, items) -> None:

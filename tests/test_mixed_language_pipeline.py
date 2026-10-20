@@ -235,6 +235,103 @@ class MixedLanguagePipelineTests(unittest.TestCase):
         self.assertEqual(output[0]["text"], "S tier.")
         self.assertEqual(model.calls, [{"batch_size": 8, "language": None}])
 
+    def test_transcription_recovers_empty_vad_via_direct_whisper_decoding(self):
+        class DirectDecoder:
+            def __init__(self):
+                self.calls = []
+
+            def detect_language(self, **_kwargs):
+                return "en", 0.99, None
+
+            def transcribe(self, _audio, **kwargs):
+                self.calls.append(kwargs)
+                segment = SimpleNamespace(start=0.5, end=2.5, text="Direct decoded text.", no_speech_prob=0.05)
+                info = SimpleNamespace(language="en")
+                return [segment], info
+
+        class WhisperModel:
+            def __init__(self):
+                self.model = DirectDecoder()
+
+            def transcribe(self, _audio, **_kwargs):
+                return {"language": "en", "segments": []}
+
+        model = WhisperModel()
+        profile = SimpleNamespace(cuda_available=False, cpu_threads=4, whisper_batch_size=8)
+        original_runtime_profile = transcribe.runtime_profile
+        original_load_model = transcribe.whisperx.load_model
+        original_load_audio = transcribe.whisperx.load_audio
+        original_align = transcribe._align_segments_by_language
+        original_release = transcribe._release_cuda
+        original_log = transcribe.log_to_video
+        transcribe.runtime_profile = lambda: profile
+        transcribe.whisperx.load_model = lambda *_args, **_kwargs: model
+        transcribe.whisperx.load_audio = lambda _path: np.zeros(32_000, dtype=np.float32)
+        transcribe._align_segments_by_language = lambda _audio, segments, *_args, **_kwargs: segments
+        transcribe._release_cuda = lambda *_args, **_kwargs: None
+        transcribe.log_to_video = lambda *_args, **_kwargs: None
+        try:
+            with (
+                tempfile.TemporaryDirectory() as temp_dir,
+                mock.patch.object(transcribe, "_verify_whisperx_vad_asset", return_value="test-vad.bin"),
+                mock.patch.object(transcribe, "_whisper_model_source", return_value=("test-whisper", True)),
+            ):
+                output_path = Path(temp_dir) / "segments.json"
+                output, language = transcribe.transcribe("audio.wav", str(output_path), "auto", "test-video")
+        finally:
+            transcribe.runtime_profile = original_runtime_profile
+            transcribe.whisperx.load_model = original_load_model
+            transcribe.whisperx.load_audio = original_load_audio
+            transcribe._align_segments_by_language = original_align
+            transcribe._release_cuda = original_release
+            transcribe.log_to_video = original_log
+
+        self.assertEqual(language, "en")
+        self.assertEqual(len(output), 1)
+        self.assertEqual(output[0]["text"], "Direct decoded text.")
+        self.assertTrue(len(model.model.calls) > 0)
+        self.assertFalse(model.model.calls[0]["vad_filter"])
+
+    def test_empty_transcription_raises_informative_message(self):
+        class DirectDecoder:
+            def transcribe(self, _audio, **_kwargs):
+                return [], SimpleNamespace(language="en")
+
+        class WhisperModel:
+            def __init__(self):
+                self.model = DirectDecoder()
+
+            def transcribe(self, _audio, **_kwargs):
+                return {"language": "en", "segments": []}
+
+        model = WhisperModel()
+        profile = SimpleNamespace(cuda_available=False, cpu_threads=4, whisper_batch_size=8)
+        original_runtime_profile = transcribe.runtime_profile
+        original_load_model = transcribe.whisperx.load_model
+        original_load_audio = transcribe.whisperx.load_audio
+        original_release = transcribe._release_cuda
+        original_log = transcribe.log_to_video
+        transcribe.runtime_profile = lambda: profile
+        transcribe.whisperx.load_model = lambda *_args, **_kwargs: model
+        transcribe.whisperx.load_audio = lambda _path: np.zeros(32_000, dtype=np.float32)
+        transcribe._release_cuda = lambda *_args, **_kwargs: None
+        transcribe.log_to_video = lambda *_args, **_kwargs: None
+        try:
+            with (
+                tempfile.TemporaryDirectory() as temp_dir,
+                mock.patch.object(transcribe, "_verify_whisperx_vad_asset", return_value="test-vad.bin"),
+                mock.patch.object(transcribe, "_whisper_model_source", return_value=("test-whisper", True)),
+            ):
+                output_path = Path(temp_dir) / "segments.json"
+                with self.assertRaisesRegex(RuntimeError, "Không tìm thấy lời thoại trong video"):
+                    transcribe.transcribe("audio.wav", str(output_path), "auto", "test-video")
+        finally:
+            transcribe.runtime_profile = original_runtime_profile
+            transcribe.whisperx.load_model = original_load_model
+            transcribe.whisperx.load_audio = original_load_audio
+            transcribe._release_cuda = original_release
+            transcribe.log_to_video = original_log
+
     def test_switching_asr_model_releases_mismatched_warm_model(self):
         class WhisperModel:
             model = _LanguageModel([("en", 0.99)])

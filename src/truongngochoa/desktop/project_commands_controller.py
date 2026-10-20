@@ -6,6 +6,7 @@ import json
 import os
 import shutil
 import tempfile
+import uuid
 from collections import Counter
 from pathlib import Path
 
@@ -1412,6 +1413,10 @@ class ProjectCommandsController:
 
     def start_project_video(self) -> bool:
         host = self._host
+        from truongngochoa.desktop.qml_controller import TruongNgocHoaController
+
+        if not TruongNgocHoaController._can_process_license(host):
+            return False
         if not host._video_path.strip():
             QMessageBox.critical(None, "Missing video", "Please choose an input video.")
             return False
@@ -1510,6 +1515,10 @@ class ProjectCommandsController:
 
     def resume_selected_video(self) -> None:
         host = self._host
+        from truongngochoa.desktop.qml_controller import TruongNgocHoaController
+
+        if not TruongNgocHoaController._can_process_license(host):
+            return
         video = video_store.get_video(host._selected_video_id) if host._selected_video_id else None
         if not video or video.status != "paused" or host._processing_queue.contains(video.video_id):
             return
@@ -1986,4 +1995,166 @@ class ProjectCommandsController:
         host.refreshVideos()
         if was_selected:
             host.videoDeleted.emit()
+        return True
+
+    @staticmethod
+    def _relocate_video_metadata_paths(video, old_workspace: str, new_workspace: str) -> None:
+        def _relocate_str(val: str) -> str:
+            if not isinstance(val, str) or not val:
+                return val
+            try:
+                norm_val = os.path.normcase(os.path.abspath(val))
+                norm_old = os.path.normcase(os.path.abspath(old_workspace))
+                if norm_val == norm_old or norm_val.startswith(norm_old + os.sep):
+                    rel = os.path.relpath(val, old_workspace)
+                    return os.path.normpath(os.path.join(new_workspace, rel))
+            except (ValueError, OSError):
+                pass
+            return val
+
+        if video.files:
+            video.files = {
+                k: _relocate_str(v) if isinstance(v, str) else v
+                for k, v in video.files.items()
+            }
+        if video.active_artifacts:
+            video.active_artifacts = {
+                k: _relocate_str(v) if isinstance(v, str) else v
+                for k, v in video.active_artifacts.items()
+            }
+        if video.checkpoints:
+            video.checkpoints = {
+                k: _relocate_str(v) if isinstance(v, str) else v
+                for k, v in video.checkpoints.items()
+            }
+        if getattr(video, "editor_document_path", ""):
+            video.editor_document_path = _relocate_str(video.editor_document_path)
+
+    def move_videos_to_batch_project(
+        self,
+        target_project_key: str,
+        video_ids: list[str],
+        new_project_name: str = "",
+    ) -> bool:
+        host = self._host
+        video_ids = [str(vid).strip() for vid in (video_ids or []) if str(vid).strip()]
+        if not video_ids:
+            host.appAlertRequested.emit(
+                "Chuyển vào dự án",
+                "Chưa chọn video nào để chuyển.",
+                "warning",
+            )
+            return False
+
+        # 1. Resolve or create target project
+        if not target_project_key and new_project_name.strip():
+            try:
+                name = project_store.validate_new_project_name(new_project_name.strip())
+                base_dir = host._project_directory or os.path.abspath("projects")
+                target = project_store.create_project(name, base_dir, "batch")
+                target_project_key = target["key"]
+            except Exception as exc:
+                host.appAlertRequested.emit("Tạo dự án thất bại", str(exc), "error")
+                return False
+        else:
+            target = project_store.get_project(target_project_key)
+            if not target:
+                host.appAlertRequested.emit("Chuyển vào dự án", "Dự án đích không tồn tại hoặc đã bị xóa.", "error")
+                return False
+
+        target_name = target["project_name"]
+        target_videos_dir = project_store.project_videos_dir_for_key(target["key"])
+        os.makedirs(target_videos_dir, exist_ok=True)
+
+        # 2. Get current videos in target to calculate next batch_import_order
+        all_videos = video_store.list_videos()
+        target_existing = [v for v in all_videos if host._video_project_key(v) == target["key"]]
+        next_order = max([int(getattr(v, "batch_import_order", 0) or 0) for v in target_existing], default=0)
+
+        # 3. Process each video
+        affected_source_keys = set()
+        moved_count = 0
+
+        for video_id in video_ids:
+            with video_store._video_lock(video_id):
+                video = video_store.get_video(video_id)
+                if not video:
+                    continue
+                if video.status == "processing":
+                    host.appAlertRequested.emit(
+                        "Không thể chuyển video",
+                        f"Video '{video.original_filename}' đang xử lý. Hãy chờ hoặc tạm dừng trước khi chuyển.",
+                        "info",
+                    )
+                    continue
+
+                old_project_key = host._video_project_key(video)
+                if old_project_key == target["key"]:
+                    continue
+
+                affected_source_keys.add(old_project_key)
+
+                old_workspace = video_store.get_video_dir(video_id)
+                target_workspace_name = os.path.basename(old_workspace)
+                new_workspace = os.path.join(target_videos_dir, target_workspace_name)
+
+                if os.path.normcase(os.path.abspath(old_workspace)) != os.path.normcase(os.path.abspath(new_workspace)):
+                    if os.path.exists(new_workspace):
+                        compact_name = video_store._compact_video_workspace_name(video_id, video.original_filename)
+                        new_workspace = os.path.join(target_videos_dir, compact_name)
+                        if os.path.exists(new_workspace):
+                            new_workspace = os.path.join(target_videos_dir, f"{compact_name}--{uuid.uuid4().hex[:6]}")
+
+                    shutil.move(old_workspace, new_workspace)
+                    video_store._VIDEO_DIR_CACHE[video_id] = new_workspace
+
+                    # Relocate internal path references
+                    self._relocate_video_metadata_paths(video, old_workspace, new_workspace)
+
+                next_order += 1
+                video.project_key = target["key"]
+                video.project_name = target_name
+                video.project_directory = target.get("project_directory", "")
+                video.project_id = str(target.get("project_id", ""))
+                video.project_type = "batch"
+                video.batch_import_order = next_order
+
+                video_store.save_video(video)
+                moved_count += 1
+
+        if moved_count > 0:
+            project_store.touch_project_by_key(target["key"])
+
+        # 4. Clean up empty source projects (if single/manual)
+        refreshed_videos = video_store.list_videos()
+        for src_key in affected_source_keys:
+            if not src_key or src_key.startswith("legacy:"):
+                continue
+            src_project = project_store.get_project(src_key)
+            if not src_project:
+                continue
+            rem = [v for v in refreshed_videos if host._video_project_key(v) == src_key]
+            if not rem and src_project.get("project_type") in {"single", "manual"}:
+                try:
+                    project_store.delete_project_by_key(src_key)
+                except Exception:
+                    pass
+
+        # 5. If the current selected project was moved or deleted, update selection
+        if host._selected_project_key in affected_source_keys:
+            host._selected_project_key = target["key"]
+            host._project_name = target_name
+            host._project_type = "batch"
+            host._project_directory = target.get("project_directory", "")
+            host.projectSetupChanged.emit()
+            host.batchChanged.emit()
+
+        # 6. Refresh models
+        host.refreshVideos()
+
+        host.appAlertRequested.emit(
+            "Chuyển vào dự án thành công",
+            f"Đã chuyển {moved_count} video vào dự án '{target_name}'.",
+            "success",
+        )
         return True

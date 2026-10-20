@@ -110,9 +110,7 @@ ComboBox {
 
             clip: true
             model: root.delegateModel
-            // Include count in the binding so replacing an async model also
-            // clamps/restores keyboard highlight and scroll position.
-            currentIndex: Math.max(-1, Math.min(root.highlightedIndex, count - 1))
+            currentIndex: root.highlightedIndex
             reuseItems: true
             ScrollIndicator.vertical: ScrollIndicator {}
         }

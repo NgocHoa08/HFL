@@ -13,7 +13,7 @@ AppDialog {
     preferredWidth: 560
     maximumWidth: 620
     title: projectType === "batch"
-        ? qsTr("Dự án hàng loạt")
+        ? qsTr("Tạo dự án mới")
         : projectType === "manual"
             ? qsTr("Dự án thủ công")
             : projectType === "download"
@@ -42,6 +42,12 @@ AppDialog {
         projectName.forceActiveFocus()
     }
 
+    InlineBanner {
+        Layout.fillWidth: true
+        tone: "info"
+        message: qsTr("Mỗi dự án sẽ chứa các video của bạn, giúp quản lý gọn gàng và dễ tìm kiếm hơn.")
+    }
+
     FormSection {
         Layout.fillWidth: true
         title: qsTr("Tên dự án")
@@ -51,7 +57,7 @@ AppDialog {
             objectName: "projectNameInput"
             Layout.fillWidth: true
             accessibleName: qsTr("Tên dự án")
-            placeholderText: qsTr("Nhập tên dự án")
+            placeholderText: qsTr("Nhập tên dự án (Ví dụ: Kênh Review Phim, Tin Tức, Bán Hàng...)")
             selectByMouse: true
             Keys.onReturnPressed: root.submit()
         }

@@ -21,6 +21,7 @@ Rectangle {
     signal aboutRequested
     signal copyrightRequested
     signal licenseRequested
+    signal splitVideoRequested
     signal backRequested
     signal forwardRequested
     signal homeRequested

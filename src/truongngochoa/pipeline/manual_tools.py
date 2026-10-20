@@ -95,6 +95,15 @@ def detect_original_subtitle_region(*args, **kwargs):
     return implementation(*args, **kwargs)
 
 
+def read_video_subtitles(video_path, output_json_path, video_id, temp_dir, *,
+                         region_override=None, source_language="auto", progress_callback=None):
+    """OCR burned-in subtitles into timed segments; returns (segments, language)."""
+    from truongngochoa.pipeline.subtitle_reader import read_subtitles
+
+    return read_subtitles(video_path, output_json_path, video_id, temp_dir, region_override=region_override,
+                          source_language=source_language, progress_callback=progress_callback)
+
+
 def transcribe(*args, **kwargs):
     from truongngochoa.core.hardware import processing_device_preference
     from truongngochoa.core.model_choices import recognition_context

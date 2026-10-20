@@ -7,16 +7,91 @@ AppSurface {
 
     signal requestUrlImport
     signal requestDownloadProjectImport
+    signal requestReviewTranslation
 
     property bool dropActive: false
     property bool compact: false
+    property string activeView: AppController.hasSelectedOutput ? "output" : "input"
+
+    Connections {
+        target: AppController
+        function onSelectedVideoChanged() {
+            root.activeView = AppController.hasSelectedOutput ? "output" : "input";
+        }
+        function onVideoExportCompleted(videoId, path) {
+            root.activeView = "output";
+        }
+    }
 
     padding: Theme.space12
     spacing: Theme.space12
 
-    SectionHeader {
+    RowLayout {
         Layout.fillWidth: true
-        title: qsTr("Video nguồn")
+        spacing: Theme.space8
+
+        SectionHeader {
+            Layout.fillWidth: true
+            title: AppController.hasSelectedOutput ? qsTr("Trình phát video") : qsTr("Video nguồn")
+        }
+
+        Rectangle {
+            visible: AppController.hasSelectedOutput
+            Layout.preferredHeight: 28
+            Layout.preferredWidth: 180
+            radius: Theme.radiusSmall
+            color: Theme.surfaceMuted
+            border.width: 1
+            border.color: Theme.outline
+
+            RowLayout {
+                anchors.fill: parent
+                spacing: 2
+                anchors.margins: 2
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    radius: Theme.radiusSmall - 1
+                    color: root.activeView === "input" ? Theme.surfaceElevated : "transparent"
+                    border.width: root.activeView === "input" ? 1 : 0
+                    border.color: Theme.outlineStrong
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: qsTr("Bản gốc")
+                        color: root.activeView === "input" ? Theme.text : Theme.textMuted
+                        font.family: Theme.fontFamily
+                        font.pixelSize: TypeScale.metadata
+                        font.weight: root.activeView === "input" ? Font.DemiBold : Font.Normal
+                    }
+
+                    TapHandler {
+                        onTapped: root.activeView = "input"
+                    }
+                }
+
+                Rectangle {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    radius: Theme.radiusSmall - 1
+                    color: root.activeView === "output" ? Theme.focus : "transparent"
+
+                    Text {
+                        anchors.centerIn: parent
+                        text: qsTr("Bản đã sửa")
+                        color: root.activeView === "output" ? Theme.textOnAccent : Theme.textMuted
+                        font.family: Theme.fontFamily
+                        font.pixelSize: TypeScale.metadata
+                        font.weight: root.activeView === "output" ? Font.DemiBold : Font.Normal
+                    }
+
+                    TapHandler {
+                        onTapped: root.activeView = "output"
+                    }
+                }
+            }
+        }
     }
 
     Rectangle {
@@ -34,9 +109,33 @@ AppSurface {
             id: sourcePlayer
             anchors.fill: parent
             anchors.margins: 2
-            source: AppController.selectedInputSource
+            source: (root.activeView === "output" && AppController.hasSelectedOutput)
+                ? AppController.selectedOutputSource
+                : AppController.selectedInputSource
             thumbnailSource: AppController.videoThumbnailSource
             visible: AppController.videoPath.length > 0
+        }
+
+        Rectangle {
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.margins: Theme.space8
+            visible: AppController.hasSelectedOutput && AppController.videoPath.length > 0
+            radius: Theme.radiusSmall
+            color: root.activeView === "output" ? Theme.focus : Theme.surfaceElevated
+            opacity: 0.92
+            implicitHeight: 24
+            implicitWidth: badgeText.implicitWidth + Theme.space16
+
+            Text {
+                id: badgeText
+                anchors.centerIn: parent
+                text: root.activeView === "output" ? qsTr("Đang xem: Bản đã sửa") : qsTr("Đang xem: Video gốc")
+                color: root.activeView === "output" ? Theme.textOnAccent : Theme.text
+                font.family: Theme.fontFamily
+                font.pixelSize: TypeScale.metadata
+                font.weight: Font.Medium
+            }
         }
 
         Column {
@@ -155,6 +254,14 @@ AppSurface {
             onFileRequested: AppController.browseVideo()
             onLinkRequested: root.requestUrlImport()
             onDownloadProjectRequested: root.requestDownloadProjectImport()
+        }
+
+        StudioButton {
+            visible: AppController.reviewSegments.length > 0
+            text: qsTr("Sửa phụ đề từng đoạn")
+            iconGlyph: "\uE70F"
+            variant: "secondary"
+            onClicked: root.requestReviewTranslation()
         }
 
         MediaSourceImportButton {

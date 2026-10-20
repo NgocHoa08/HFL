@@ -293,6 +293,31 @@ class SocialPublishStateTests(unittest.TestCase):
             self.assertEqual(edited["zernio_post_id"], "")
             self.assertEqual(edited["upload_progress"], 0)
 
+    def test_normalize_scheduled_for_and_format_local_scheduled_time(self):
+        utc_ts = "2026-10-19T10:00:00Z"
+        self.assertEqual(tiktok_publish.normalize_scheduled_for(utc_ts), utc_ts)
+        self.assertTrue(len(tiktok_publish.format_local_scheduled_time(utc_ts)) > 0)
+        self.assertEqual(tiktok_publish.normalize_scheduled_for(""), "")
+        self.assertEqual(tiktok_publish.format_local_scheduled_time(""), "")
+
+    def test_item_scheduled_for_persistence_and_update(self):
+        with tempfile.TemporaryDirectory() as project_root:
+            media = Path(project_root, "publishing", "media", "clip.mp4")
+            media.parent.mkdir(parents=True)
+            media.write_bytes(b"video")
+            item = tiktok_publish.new_item(str(media), "", 0, "Title", "#tags", scheduled_for="2026-10-19T10:00:00Z")
+            self.assertEqual(item["scheduled_for"], "2026-10-19T10:00:00Z")
+
+            state = tiktok_publish.empty_state()
+            state["items"] = [item]
+            tiktok_publish.save_state(project_root, state)
+
+            restored = tiktok_publish.load_state(project_root)
+            self.assertEqual(restored["items"][0]["scheduled_for"], "2026-10-19T10:00:00Z")
+
+            updated = tiktok_publish.update_item(project_root, item["id"], scheduled_for="2026-10-20T15:00:00Z")
+            self.assertEqual(updated["scheduled_for"], "2026-10-20T15:00:00Z")
+
 
 if __name__ == "__main__":
     unittest.main()

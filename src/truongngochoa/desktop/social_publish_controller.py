@@ -12,6 +12,7 @@ import threading
 import time
 import uuid
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from PySide6.QtGui import QGuiApplication
@@ -181,6 +182,7 @@ class SocialPublishController:
         self._post_status_poll_deadline = 0.0
         self._post_status_poll_next = 0.0
         self._post_status_refreshing = False
+        self._schedule_poll_next = 0.0
         self._publish_signal_snapshot: tuple | None = None
         self._account_signal_snapshot: tuple | None = None
         self._option_signal_snapshot: tuple | None = None
@@ -456,8 +458,11 @@ class SocialPublishController:
         target_platform = str(item.get("target_platform") or "tiktok")
         if str(item.get("status") or "") in {"ready", "failed", "missing"} and not item.get("zernio_post_id"):
             target_platform = self.selected_platform
+        scheduled_for = str(item.get("scheduled_for") or "")
         return {
             **item,
+            "scheduled_for": scheduled_for,
+            "scheduled_for_display": tiktok_publish.format_local_scheduled_time(scheduled_for),
             "post_text": tiktok_publish.compose_post_text(item["caption"], item["hashtags"]),
             "thumbnail_source": thumbnail_source(item.get("thumbnail_path") or ""),
             "target_platform": target_platform,
@@ -1603,20 +1608,22 @@ class SocialPublishController:
         self._host.refreshVideos()
         return True
 
-    def update_item(self, row: int, caption: str, hashtags: str) -> bool:
+    def update_item(self, row: int, caption: str, hashtags: str, scheduled_for: str = "") -> bool:
         item = self._host.tiktok_publish_items.item_at(row)
         if (
             not item
             or not self._ensure_publish_project()
-            or item["status"] in {"uploading", "publishing", "published", "posted", "scheduled"}
+            or item["status"] in {"uploading", "publishing", "published", "posted"}
         ):
             return False
+        norm_scheduled = tiktok_publish.normalize_scheduled_for(scheduled_for)
         updated = tiktok_publish.update_item(
             self._project_root,
             item["id"],
             caption=caption,
             hashtags=hashtags,
-            status="ready" if item["status"] not in {"published", "posted"} else item["status"],
+            scheduled_for=norm_scheduled,
+            status="ready" if item["status"] not in {"published", "posted", "scheduled"} else item["status"],
             error="",
         )
         if updated is None:
@@ -1624,12 +1631,14 @@ class SocialPublishController:
         before = {
             "caption": str(item.get("caption") or ""),
             "hashtags": str(item.get("hashtags") or ""),
+            "scheduled_for": str(item.get("scheduled_for") or ""),
             "status": str(item.get("status") or "ready"),
             "error": str(item.get("error") or ""),
         }
         after = {
             "caption": str(updated.get("caption") or ""),
             "hashtags": str(updated.get("hashtags") or ""),
+            "scheduled_for": str(updated.get("scheduled_for") or ""),
             "status": str(updated.get("status") or "ready"),
             "error": str(updated.get("error") or ""),
         }
@@ -1666,9 +1675,30 @@ class SocialPublishController:
         item = self._host.tiktok_publish_items.item_at(row)
         return self._publish_item(item, continue_queue=continue_queue)
 
+    def publish_item_scheduled(self, row: int, scheduled_for: str) -> bool:
+        item = self._host.tiktok_publish_items.item_at(row)
+        if not item or not self._ensure_publish_project():
+            return False
+        norm = tiktok_publish.normalize_scheduled_for(scheduled_for)
+        tiktok_publish.update_item(self._project_root, item["id"], scheduled_for=norm)
+        self._reload()
+        updated_item = self._host.tiktok_publish_items.item_at(row)
+        return self._publish_item(updated_item, continue_queue=False)
+
+    def schedule_item(self, row: int, scheduled_for: str) -> bool:
+        item = self._host.tiktok_publish_items.item_at(row)
+        if not item or not self._ensure_publish_project():
+            return False
+        norm = tiktok_publish.normalize_scheduled_for(scheduled_for)
+        updated = tiktok_publish.update_item(self._project_root, item["id"], scheduled_for=norm)
+        if updated is None:
+            return False
+        self._reload()
+        return True
+
     def _publish_item(self, item: dict | None, *, continue_queue: bool, background: bool = False) -> bool:
-        if item and (item.get("status") in {"published", "posted", "scheduled"}
-                     or (item.get("zernio_post_id") and item.get("status") not in {"failed", "partial", "draft"})):
+        if item and (item.get("status") in {"published", "posted"}
+                     or (item.get("zernio_post_id") and item.get("status") not in {"failed", "partial", "draft", "ready"})):
             self._status = "This video already has a social post; it will not be published again."
             self._emit_changed()
             return False
@@ -1680,11 +1710,19 @@ class SocialPublishController:
         self._status = f"Uploading {item['file_name']}"
         tiktok_publish.update_item(self._project_root, item["id"], status="uploading", error="", upload_progress=0)
         self._reload()
+        scheduled_for = str(item.get("scheduled_for") or "").strip()
+        current_utc = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        if scheduled_for and scheduled_for <= current_utc:
+            publish_now = True
+            scheduled_for = ""
+        else:
+            publish_now = bool(self.publish_now and not scheduled_for)
         settings = {
             "account_id": self._state["selected_account_id"],
             "platform": self.selected_platform,
             "privacy_level": self._state["privacy_level"],
-            "publish_now": self.publish_now,
+            "publish_now": publish_now,
+            "scheduled_for": scheduled_for,
             "allow_comment": self.allow_comment,
             "allow_duet": self.allow_duet,
             "allow_stitch": self.allow_stitch,
@@ -1713,6 +1751,29 @@ class SocialPublishController:
 
     def publish_all(self) -> bool:
         return self.publish_next(continue_queue=True)
+
+    def schedule_and_publish_all(self, start_time: str = "", interval_minutes: int = 30) -> bool:
+        if not self._ensure_publish_project():
+            return False
+        interval = max(5, int(interval_minutes or 30))
+        base_dt = None
+        if start_time:
+            norm = tiktok_publish.normalize_scheduled_for(start_time)
+            if norm:
+                try:
+                    base_dt = datetime.fromisoformat(norm.replace("Z", "+00:00")).astimezone()
+                except Exception:
+                    pass
+        if base_dt is None:
+            base_dt = datetime.now().astimezone() + timedelta(minutes=30)
+
+        chrono_items = [item for item in self._state.get("items") or [] if self._waiting_to_publish(item)]
+        for index, item in enumerate(chrono_items):
+            item_dt = base_dt + timedelta(minutes=index * interval)
+            item_utc = item_dt.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+            tiktok_publish.update_item(self._project_root, item["id"], scheduled_for=item_utc)
+        self._reload()
+        return self.publish_all()
 
     def _continue_owned_queue(self) -> bool:
         # Only the already-confirmed Publish All workflow may continue without
@@ -1787,6 +1848,8 @@ class SocialPublishController:
             self._events.put({"type": "publishing", "project_key": project_key, "item_id": item["id"]})
             content = tiktok_publish.compose_post_text(item["caption"], item["hashtags"])
             title = next((line.strip() for line in content.splitlines() if line.strip()), Path(item["file_path"]).stem)
+            scheduled_for = str(settings.get("scheduled_for") or "").strip()
+            publish_now = bool(settings.get("publish_now")) and not bool(scheduled_for)
             result = _create_post_idempotently(
                 client,
                 {
@@ -1795,7 +1858,8 @@ class SocialPublishController:
                     "content": content,
                     "media_url": public_url,
                     "privacy_level": settings["privacy_level"],
-                    "publish_now": settings["publish_now"],
+                    "publish_now": publish_now,
+                    "scheduled_for": scheduled_for,
                     "request_id": item["request_id"],
                     "title": title,
                     "allow_comment": settings["allow_comment"],
@@ -1811,17 +1875,24 @@ class SocialPublishController:
                 post = result
             post_id = self._object_id(post)
             post_result = zernio.post_result(post, settings["platform"])
-            status = post_result["status"] or ("publishing" if settings["publish_now"] else "draft")
+            status = post_result["status"] or ("publishing" if publish_now else ("scheduled" if scheduled_for else "draft"))
             # The create response may briefly expose an internal/legacy status
             # even though Zernio already accepted this logical post. Do not
             # make the card publishable again while that remote post exists.
             if (
-                settings["publish_now"]
+                publish_now
                 and post_id
                 and status not in _SUCCESS_POST_STATUSES
                 and status not in _FAILED_POST_STATUSES
             ):
                 status = "publishing"
+            elif (
+                scheduled_for
+                and post_id
+                and status not in _SUCCESS_POST_STATUSES
+                and status not in _FAILED_POST_STATUSES
+            ):
+                status = "scheduled"
             self._events.put(
                 {
                     "type": "publish_finished",
@@ -2182,6 +2253,15 @@ class SocialPublishController:
                     if not errors
                     else f"Added {event['done']} video(s); {len(errors)} failed."
                 )
+                if errors and hasattr(self._host, "_show_app_alert"):
+                    if any("between 3 seconds and 10 minutes" in err for err in errors):
+                        alert_msg = (
+                            "Video vượt quá thời lượng cho phép (tối đa 10 phút để đăng mạng xã hội).\n\n"
+                            "Gợi ý: Bạn có thể sử dụng công cụ 'Cắt chia đôi video' để chia thành 2 phần (Phần 1 & Phần 2) và thêm vào hàng đợi đăng."
+                        )
+                    else:
+                        alert_msg = f"Không thể thêm video vào hàng đợi:\n" + "\n".join(errors)
+                    self._host._show_app_alert("Không thể thêm video", alert_msg, "warning")
                 refresh_projects = True
             elif kind == "upload_progress":
                 self._update_item_state(event["item_id"], upload_progress=event["progress"])
@@ -2213,6 +2293,8 @@ class SocialPublishController:
                 if status in _SUCCESS_POST_STATUSES:
                     platform_label = PLATFORM_LABELS.get(str(event.get("platform") or ""), "The platform")
                     self._status = f"{platform_label} published the video successfully."
+                elif status == "scheduled":
+                    self._status = "Đã hẹn giờ đăng video thành công."
                 else:
                     self._status = str(
                         event.get("error")
@@ -2300,6 +2382,7 @@ class SocialPublishController:
         self._poll_oauth_accounts()
         self._poll_connected_accounts()
         self._poll_post_statuses()
+        self._poll_scheduled_items()
 
     def copy_caption(self, row: int) -> bool:
         item = self._host.tiktok_publish_items.item_at(row)
@@ -2492,6 +2575,39 @@ class SocialPublishController:
         self._post_status_poll_deadline = 0.0
         self._post_status_poll_next = 0.0
         self._post_status_refreshing = False
+
+    def _poll_scheduled_items(self) -> None:
+        """Automatically dispatch queued posts when their local schedule time arrives."""
+        if (
+            self._busy
+            or not self._project_key
+            or not self._project_root
+            or not self._api_key()
+            or not self.account_ready
+        ):
+            return
+        now = time.monotonic()
+        if now < getattr(self, "_schedule_poll_next", 0.0):
+            return
+        self._schedule_poll_next = now + 2.0
+
+        current_utc = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        items = self._queue_items()
+        for row in range(len(items) - 1, -1, -1):
+            item = items[row]
+            status = str(item.get("status") or "")
+            if status in {"ready", "draft"}:
+                sched = str(item.get("scheduled_for") or "").strip()
+                if sched and sched <= current_utc:
+                    self._consent_confirmed = True
+                    display_time = tiktok_publish.format_local_scheduled_time(sched) or sched
+                    self._status = (
+                        f"Đã đến giờ hẹn ({display_time}), "
+                        f"tự động đăng {item.get('file_name', '')}..."
+                    )
+                    self._emit_changed()
+                    self.publish_item(row, continue_queue=False)
+                    break
 
     def _connection_profile(self, profiles: list[dict]) -> dict:
         if not profiles:

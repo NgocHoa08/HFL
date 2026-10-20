@@ -16,6 +16,7 @@ Rectangle {
     readonly property bool canProcess: AppController.hasSelectedVideo && !root.selectedActive
         && !AppController.videoExportBusy
     readonly property bool canReview: AppController.selectedStatus === "awaiting_review"
+        || (AppController.reviewSegments.length > 0 && ["done", "paused"].indexOf(AppController.selectedStatus) >= 0)
     readonly property string headline: AppController.selectedStatus === "failed"
         ? AppController.selectedFailureTitle
         : AppController.selectedStatus === "cancelled"
@@ -69,9 +70,9 @@ Rectangle {
 
             StudioButton {
                 visible: root.canReview
-                text: qsTr("Duyệt phụ đề")
+                text: AppController.selectedStatus === "done" ? qsTr("Xem & Sửa phụ đề") : qsTr("Duyệt phụ đề")
                 iconGlyph: "\uE70F"
-                variant: "primary"
+                variant: AppController.selectedStatus === "done" ? "secondary" : "primary"
                 onClicked: root.requestReviewTranslation()
             }
 

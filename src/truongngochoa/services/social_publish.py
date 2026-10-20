@@ -29,6 +29,48 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
+def normalize_scheduled_for(value: str) -> str:
+    """Normalize any user-input local datetime or ISO string to UTC ISO 8601 (YYYY-MM-DDTHH:MM:SSZ)."""
+    candidate = str(value or "").strip()
+    if not candidate:
+        return ""
+    try:
+        if candidate.endswith("Z"):
+            dt = datetime.fromisoformat(candidate.replace("Z", "+00:00"))
+            return dt.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        if "+" in candidate[10:] or ("-" in candidate[10:] and "T" in candidate):
+            dt = datetime.fromisoformat(candidate)
+            return dt.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        cleaned = candidate.replace("T", " ")
+        parts = cleaned.split(" ")
+        if len(parts) == 2:
+            date_part, time_part = parts
+            time_tokens = time_part.split(":")
+            if len(time_tokens) == 2:
+                dt = datetime.strptime(f"{date_part} {time_part}", "%Y-%m-%d %H:%M")
+            else:
+                sec = time_tokens[2].split(".")[0]
+                dt = datetime.strptime(f"{date_part} {time_tokens[0]}:{time_tokens[1]}:{sec}", "%Y-%m-%d %H:%M:%S")
+            return dt.astimezone().astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    except Exception:
+        pass
+    return candidate
+
+
+def format_local_scheduled_time(utc_iso: str) -> str:
+    """Format a UTC ISO string into friendly local time string (HH:MM DD/MM/YYYY)."""
+    if not utc_iso:
+        return ""
+    try:
+        iso_clean = utc_iso.replace("Z", "+00:00") if utc_iso.endswith("Z") else utc_iso
+        dt = datetime.fromisoformat(iso_clean)
+        if dt.tzinfo is not None:
+            dt = dt.astimezone()
+        return dt.strftime("%H:%M %d/%m/%Y")
+    except Exception:
+        return str(utc_iso)
+
+
 def _empty_state() -> dict[str, Any]:
     return {
         "schema_version": STATE_SCHEMA_VERSION,
@@ -41,6 +83,7 @@ def _empty_state() -> dict[str, Any]:
         "allow_duet": True,
         "allow_stitch": True,
         "publish_now": True,
+        "schedule_interval_minutes": 30,
         "share_to_feed": True,
         "ai_generated": False,
         "first_comment": "",
@@ -204,6 +247,7 @@ def load_state(project_root: str) -> dict[str, Any]:
                 "platform_post_url": stored_url,
                 "platform_post_url_verified": url_verified,
                 "target_platform": target_platform,
+                "scheduled_for": normalize_scheduled_for(str(item.get("scheduled_for") or "")),
                 "duration_seconds": max(0.0, float(item.get("duration_seconds") or 0.0)),
                 "video_width": max(0, int(item.get("video_width") or 0)),
                 "video_height": max(0, int(item.get("video_height") or 0)),
@@ -229,6 +273,7 @@ def load_state(project_root: str) -> dict[str, Any]:
         "allow_duet": bool(payload.get("allow_duet", True)),
         "allow_stitch": bool(payload.get("allow_stitch", True)),
         "publish_now": bool(payload.get("publish_now", True)),
+        "schedule_interval_minutes": max(5, int(payload.get("schedule_interval_minutes") or 30)),
         "share_to_feed": bool(payload.get("share_to_feed", True)),
         "ai_generated": bool(payload.get("ai_generated", False)),
         "first_comment": normalize_caption(str(payload.get("first_comment") or "")),
@@ -250,6 +295,7 @@ def save_state(project_root: str, state: dict[str, Any]) -> None:
         "allow_duet": bool(state.get("allow_duet", True)),
         "allow_stitch": bool(state.get("allow_stitch", True)),
         "publish_now": bool(state.get("publish_now", True)),
+        "schedule_interval_minutes": max(5, int(state.get("schedule_interval_minutes") or 30)),
         "share_to_feed": bool(state.get("share_to_feed", True)),
         "ai_generated": bool(state.get("ai_generated", False)),
         "first_comment": normalize_caption(str(state.get("first_comment") or "")),
@@ -305,6 +351,8 @@ def update_item(project_root: str, item_id: str, **changes: Any) -> dict[str, An
         if "hashtags" in changes:
             changes["hashtags"] = normalize_hashtags(str(changes["hashtags"] or ""))
             content_changed = content_changed or changes["hashtags"] != item.get("hashtags")
+        if "scheduled_for" in changes:
+            changes["scheduled_for"] = normalize_scheduled_for(str(changes["scheduled_for"] or ""))
         if content_changed:
             # A changed caption is a new logical post. Preserve the request ID
             # for an unchanged retry so an ambiguous network failure cannot
@@ -373,6 +421,7 @@ def update_publish_settings(project_root: str, **changes: Any) -> dict[str, Any]
         "allow_duet",
         "allow_stitch",
         "publish_now",
+        "schedule_interval_minutes",
         "share_to_feed",
         "ai_generated",
         "first_comment",
@@ -382,7 +431,9 @@ def update_publish_settings(project_root: str, **changes: Any) -> dict[str, Any]
         for key, value in changes.items():
             if key not in allowed:
                 continue
-            if key.startswith("allow_") or key in {"publish_now", "share_to_feed", "ai_generated"}:
+            if key == "schedule_interval_minutes":
+                state[key] = max(5, int(value or 30))
+            elif key.startswith("allow_") or key in {"publish_now", "share_to_feed", "ai_generated"}:
                 state[key] = bool(value)
             elif key == "first_comment":
                 state[key] = normalize_caption(str(value or ""))
@@ -392,7 +443,7 @@ def update_publish_settings(project_root: str, **changes: Any) -> dict[str, Any]
         return state
 
 
-def new_item(file_path: str, thumbnail_path: str, order: int, caption: str, hashtags: str) -> dict[str, Any]:
+def new_item(file_path: str, thumbnail_path: str, order: int, caption: str, hashtags: str, scheduled_for: str = "") -> dict[str, Any]:
     now = _now()
     return {
         "id": str(uuid.uuid4()),
@@ -403,6 +454,7 @@ def new_item(file_path: str, thumbnail_path: str, order: int, caption: str, hash
         "source_path": "",
         "caption": normalize_caption(caption),
         "hashtags": normalize_hashtags(hashtags),
+        "scheduled_for": normalize_scheduled_for(scheduled_for),
         "status": "ready",
         "error": "",
         "request_id": str(uuid.uuid4()),

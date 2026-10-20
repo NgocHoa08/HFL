@@ -456,6 +456,9 @@ Invoke-PythonChecked -Arguments @((Join-Path $PSScriptRoot "verify-legal-state.p
 Copy-Item -LiteralPath $FfmpegManifestPath -Destination (Join-Path $ArtifactPath "FFMPEG-MANIFEST.json") -Force
 Copy-Item -LiteralPath (Join-Path $Root "runtime\third-party-sources-manifest.json") -Destination (Join-Path $ArtifactPath "THIRD-PARTY-SOURCES.json") -Force
 Copy-Item -LiteralPath $ResourcePackManifestPath -Destination (Join-Path $ArtifactPath "RESOURCE-PACKS.json") -Force
+if (Test-Path (Join-Path $Root "update-layout.json")) {
+  Copy-Item -LiteralPath (Join-Path $Root "update-layout.json") -Destination (Join-Path $ArtifactPath "update-layout.json") -Force
+}
 $ArtifactSources = Join-Path $ArtifactPath "sources"
 New-Item -ItemType Directory -Path $ArtifactSources -Force | Out-Null
 Copy-Item -LiteralPath $FfmpegCompliancePath -Destination $ArtifactSources -Recurse -Force

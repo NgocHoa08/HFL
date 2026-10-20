@@ -434,6 +434,54 @@ class ZernioClientTests(unittest.TestCase):
 
         self.assertEqual(posts, [{"id": "post-1"}])
 
+    def test_create_tiktok_post_with_scheduled_for_sets_scheduled_body(self):
+        captured = {}
+
+        def fake_urlopen(request, timeout):
+            captured["request"] = request
+            return _Response({"data": {"post": {"id": "post-sched-1", "status": "scheduled"}}})
+
+        with patch("truongngochoa.services.zernio.urlopen", side_effect=fake_urlopen):
+            zernio.ZernioClient(self.key).create_tiktok_post(
+                account_id="account-1",
+                content="Scheduled TikTok",
+                media_url="https://media.example/video.mp4",
+                privacy_level="PUBLIC_TO_EVERYONE",
+                publish_now=False,
+                request_id="req-sched",
+                scheduled_for="2026-10-19T10:00:00Z",
+                timezone="Asia/Ho_Chi_Minh",
+            )
+
+        body = json.loads(captured["request"].data.decode("utf-8"))
+        self.assertEqual(body["scheduledFor"], "2026-10-19T10:00:00Z")
+        self.assertEqual(body["timezone"], "Asia/Ho_Chi_Minh")
+        self.assertNotIn("publishNow", body)
+
+    def test_create_video_post_with_scheduled_for_sets_scheduled_body(self):
+        captured = {}
+
+        def fake_urlopen(request, timeout):
+            captured["request"] = request
+            return _Response({"data": {"post": {"id": "post-yt-1", "status": "scheduled"}}})
+
+        with patch("truongngochoa.services.zernio.urlopen", side_effect=fake_urlopen):
+            zernio.ZernioClient(self.key).create_video_post(
+                platform="youtube",
+                account_id="yt-1",
+                content="Scheduled YT",
+                media_url="https://media.example/yt.mp4",
+                publish_now=False,
+                request_id="req-yt",
+                title="YT Title",
+                scheduled_for="2026-10-20T12:00:00Z",
+            )
+
+        body = json.loads(captured["request"].data.decode("utf-8"))
+        self.assertEqual(body["scheduledFor"], "2026-10-20T12:00:00Z")
+        self.assertNotIn("publishNow", body)
+
 
 if __name__ == "__main__":
     unittest.main()
+

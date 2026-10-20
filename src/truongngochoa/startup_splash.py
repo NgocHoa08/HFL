@@ -178,14 +178,14 @@ class StartupSplash:
                 previous_font = gdi.SelectObject(dc, fonts[0])
                 sizes = []
                 for part in ("Trương ", "Ngọc Hoà"):
-                    size = w.SIZE()
-                    gdi.GetTextExtentPoint32W(dc, part, len(part), c.byref(size))
-                    sizes.append(size.cx)
+                    calc_rect = w.RECT(0, 0, 0, 0)
+                    user.DrawTextW(dc, part, -1, c.byref(calc_rect), 0x0420)  # DT_CALCRECT | DT_SINGLELINE
+                    sizes.append(calc_rect.right - calc_rect.left)
                 wordmark_x = (width - sum(sizes)) // 2
                 for part, part_width, shade in zip(("Trương ", "Ngọc Hoà"), sizes, ("#F0F6FC", "#38BDF8")):
                     gdi.SetTextColor(dc, color(shade))
                     rect = w.RECT(wordmark_x, px(174), wordmark_x + part_width, px(223))
-                    user.DrawTextW(dc, part, -1, c.byref(rect), 4 | 32)
+                    user.DrawTextW(dc, part, -1, c.byref(rect), 4 | 32 | 0x0100)  # DT_VCENTER | DT_SINGLELINE | DT_NOCLIP
                     wordmark_x += part_width
                 gdi.SelectObject(dc, previous_font)
                 for text, y, font, shade in ((self.status, 221, fonts[1], "#9DB0CE"),):

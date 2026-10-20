@@ -2,7 +2,7 @@ import unittest
 import tempfile
 from queue import Empty
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, PropertyMock, patch
 from PySide6.QtWidgets import QMessageBox
 
 from truongngochoa.services import social_publish as tiktok_publish, zernio
@@ -34,6 +34,8 @@ class _Host:
         self.tiktok_publish_items = _Model()
         self.tiktok_project_sources = _Model()
         self.refresh_count = 0
+        self._project_type = "publish"
+        self._selected_project_key = "test-project"
 
     def refreshVideos(self):
         self.refresh_count += 1
@@ -1460,6 +1462,79 @@ class SocialPublishControllerTests(unittest.TestCase):
             "https://www.tiktok.com/@creator/video/123",
         )
 
+    def test_schedule_and_publish_all_assigns_staggered_timestamps(self):
+        with tempfile.TemporaryDirectory() as project_root:
+            media = Path(project_root, "video1.mp4")
+            media.write_bytes(b"video")
+            self.controller._project_root = project_root
+            self.controller._project_key = "test-project"
+            item1 = tiktok_publish.new_item(str(media), "", 0, "Video 1", "#v1")
+            item2 = tiktok_publish.new_item(str(media), "", 1, "Video 2", "#v2")
+            state = tiktok_publish.empty_state()
+            state["items"] = [item1, item2]
+            tiktok_publish.save_state(project_root, state)
+            self.controller._state = state
+            self.controller._sync_model()
+
+            with patch.object(self.controller, "publish_all", return_value=True) as mock_pub:
+                result = self.controller.schedule_and_publish_all(
+                    start_time="2026-10-19T10:00:00Z",
+                    interval_minutes=30,
+                )
+                self.assertTrue(result)
+                mock_pub.assert_called_once()
+
+            loaded = tiktok_publish.load_state(project_root)
+            self.assertEqual(loaded["items"][0]["scheduled_for"], "2026-10-19T10:00:00Z")
+            self.assertEqual(loaded["items"][1]["scheduled_for"], "2026-10-19T10:30:00Z")
+
+    def test_poll_scheduled_items_auto_publishes_when_due(self):
+        with tempfile.TemporaryDirectory() as project_root:
+            media = Path(project_root, "video1.mp4")
+            media.write_bytes(b"video")
+            self.controller._project_root = project_root
+            self.controller._project_key = "test-project"
+            # Schedule in the past
+            past_utc = "2020-01-01T00:00:00Z"
+            item = tiktok_publish.new_item(str(media), "", 0, "Video 1", "#v1", scheduled_for=past_utc)
+            state = tiktok_publish.empty_state()
+            state["items"] = [item]
+            state["selected_account_id"] = "acc-1"
+            tiktok_publish.save_state(project_root, state)
+            self.controller._state = state
+            self.controller._sync_model()
+
+            with patch.object(self.controller, "_api_key", return_value="key"), \
+                 patch.object(self.controller, "publish_item", return_value=True) as mock_pub, \
+                 patch.object(type(self.controller), "account_ready", new_callable=PropertyMock, return_value=True):
+                self.controller._poll_scheduled_items()
+                mock_pub.assert_called_once_with(0, continue_queue=False)
+                self.assertTrue(self.controller._consent_confirmed)
+                self.assertIn("Đã đến giờ hẹn", self.controller._status)
+
+    def test_poll_scheduled_items_ignores_future_posts(self):
+        with tempfile.TemporaryDirectory() as project_root:
+            media = Path(project_root, "video1.mp4")
+            media.write_bytes(b"video")
+            self.controller._project_root = project_root
+            self.controller._project_key = "test-project"
+            # Schedule far in the future
+            future_utc = "2099-10-19T01:00:00Z"
+            item = tiktok_publish.new_item(str(media), "", 0, "Video 1", "#v1", scheduled_for=future_utc)
+            state = tiktok_publish.empty_state()
+            state["items"] = [item]
+            state["selected_account_id"] = "acc-1"
+            tiktok_publish.save_state(project_root, state)
+            self.controller._state = state
+            self.controller._sync_model()
+
+            with patch.object(self.controller, "_api_key", return_value="key"), \
+                 patch.object(self.controller, "publish_item", return_value=True) as mock_pub, \
+                 patch.object(type(self.controller), "account_ready", new_callable=PropertyMock, return_value=True):
+                self.controller._poll_scheduled_items()
+                mock_pub.assert_not_called()
+
 
 if __name__ == "__main__":
     unittest.main()
+

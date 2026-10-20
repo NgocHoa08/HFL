@@ -92,7 +92,46 @@ Module {
         Method { name: "saveConfig"; Parameter { name: "url"; type: "string" } Parameter { name: "key"; type: "string" } }
     }
     Component {
+        name: "VideoSplitController"
+        Property { name: "hasSource"; type: "bool"; isReadonly: true }
+        Property { name: "sourcePath"; type: "string"; isReadonly: true }
+        Property { name: "sourceName"; type: "string"; isReadonly: true }
+        Property { name: "sourceDuration"; type: "double"; isReadonly: true }
+        Property { name: "sourceDurationFormatted"; type: "string"; isReadonly: true }
+        Property { name: "sourceResolution"; type: "string"; isReadonly: true }
+        Property { name: "sourceFileSize"; type: "string"; isReadonly: true }
+        Property { name: "splitPoint"; type: "double"; isReadonly: true }
+        Property { name: "splitPointFormatted"; type: "string"; isReadonly: true }
+        Property { name: "splitPercent"; type: "double"; isReadonly: true }
+        Property { name: "part1DurationFormatted"; type: "string"; isReadonly: true }
+        Property { name: "part2DurationFormatted"; type: "string"; isReadonly: true }
+        Property { name: "part1FileName"; type: "string"; isReadonly: true }
+        Property { name: "part2FileName"; type: "string"; isReadonly: true }
+        Property { name: "outputDirectory"; type: "string"; isReadonly: true }
+        Property { name: "splitMode"; type: "string"; isReadonly: true }
+        Property { name: "busy"; type: "bool"; isReadonly: true }
+        Property { name: "progress"; type: "int"; isReadonly: true }
+        Property { name: "statusMessage"; type: "string"; isReadonly: true }
+        Property { name: "splitCompleted"; type: "bool"; isReadonly: true }
+        Property { name: "part1Path"; type: "string"; isReadonly: true }
+        Property { name: "part2Path"; type: "string"; isReadonly: true }
+        Property { name: "errorMessage"; type: "string"; isReadonly: true }
+        Signal { name: "stateChanged" }
+        Method { name: "setSourceVideo"; type: "bool"; Parameter { name: "path"; type: "string" } }
+        Method { name: "browseSourceVideo"; type: "bool" }
+        Method { name: "browseOutputDirectory"; type: "bool" }
+        Method { name: "setSplitPercent"; Parameter { name: "percent"; type: "double" } }
+        Method { name: "setSplitPoint"; Parameter { name: "seconds"; type: "double" } }
+        Method { name: "setSplitMode"; Parameter { name: "mode"; type: "string" } }
+        Method { name: "startSplit"; type: "bool" }
+        Method { name: "cancelSplit" }
+        Method { name: "openOutputDirectory" }
+        Method { name: "addPartsToSocialQueue"; type: "bool" }
+        Method { name: "reset" }
+    }
+    Component {
         name: "TruongNgocHoaController"
+        Property { name: "videoSplit"; type: "VideoSplitController"; isPointer: true; isReadonly: true }
         Property { name: "license"; type: "LicenseController"; isPointer: true; isReadonly: true }
         Property { name: "manualSubtitleModel"; type: "ManualSubtitleModel"; isPointer: true; isReadonly: true }
         Property { name: "subtitleOverlayRenderer"; type: "SubtitleOverlayRenderer"; isPointer: true; isReadonly: true }
@@ -2270,6 +2309,13 @@ Module {
             Parameter { name: "a1"; type: "int" }
             Parameter { name: "a2"; type: "QString" }
             Parameter { name: "a3"; type: "QString" }
+            Parameter { name: "a4"; type: "QString" }
+        }
+        Method {
+            name: "scheduleTikTokPublishItem"
+            type: "bool"
+            Parameter { name: "a1"; type: "int" }
+            Parameter { name: "a2"; type: "QString" }
         }
         Method {
             name: "saveZernioApiKey"
@@ -2328,8 +2374,37 @@ Module {
             type: "bool"
             Parameter { name: "a1"; type: "int" }
         }
+        Method {
+            name: "publishTikTokItemScheduled"
+            type: "bool"
+            Parameter { name: "a1"; type: "int" }
+            Parameter { name: "a2"; type: "QString" }
+        }
         Method { name: "publishNextTikTokItem"; type: "bool" }
         Method { name: "publishAllTikTokItems"; type: "bool" }
+        Method {
+            name: "scheduleAndPublishAll"
+            type: "bool"
+            Parameter { name: "a1"; type: "QString" }
+            Parameter { name: "a2"; type: "int" }
+        }
+        Method {
+            name: "getLocalTimePlusHours"
+            type: "QString"
+            Parameter { name: "a1"; type: "int" }
+        }
+        Method {
+            name: "getPresetTime"
+            type: "QString"
+            Parameter { name: "a1"; type: "int" }
+            Parameter { name: "a2"; type: "int" }
+            Parameter { name: "a3"; type: "int" }
+        }
+        Method {
+            name: "formatLocalTime"
+            type: "QString"
+            Parameter { name: "a1"; type: "QString" }
+        }
         Method { name: "refreshTikTokPostStatuses"; type: "bool" }
         Method { name: "cancelTikTokPublishing" }
         Method {
@@ -2358,6 +2433,9 @@ Module {
         }
         Method { name: "deleteCurrentProject" }
         Method { name: "refreshVideos" }
+        Method { name: "refreshVideosIfChanged" }
+        Method { name: "batchPublishCounts" }
+        Method { name: "projectVideosPublishState" }
         Method { name: "openInputFile" }
         Property { name: "projectKey"; type: "QString"; read: "projectKey"; notify: "projectSetupChanged"; isReadonly: true }
         Property { name: "videoExportBusy"; type: "bool"; read: "videoExportBusy"; notify: "exportStateChanged"; isReadonly: true }

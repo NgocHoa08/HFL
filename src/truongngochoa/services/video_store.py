@@ -242,6 +242,7 @@ def create_video(video_id: str, original_filename: str, config: VideoConfig, vid
         source_language=config.source_language,
         target_language=config.target_language,
         speech_recognition_model=config.speech_recognition_model,
+        subtitle_source=config.subtitle_source,
         translator_provider=config.translator_provider,
         translation_model=config.translation_model,
         tts_provider=config.tts_provider,
@@ -516,6 +517,8 @@ def _migrate_video_metadata(raw_data: dict) -> tuple[dict, bool]:
                     override["provider"] = "omnivoice"
     if data.get("speech_recognition_model") not in {"small", "small-cpu", "small-gpu", "large-v3-turbo"}:
         data["speech_recognition_model"] = "small"
+    if data.get("subtitle_source") not in {"audio", "ocr", "auto"}:
+        data["subtitle_source"] = "audio"
     if data.get("translation_model") not in {"auto", "q4", "full", "gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.8-flash"}:
         data["translation_model"] = "q4"
     data["translator_provider"] = "gemini" if str(data["translation_model"]).startswith("gemini-") else "hymt2"

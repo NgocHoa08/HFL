@@ -10,16 +10,45 @@ Item {
 
     property var projectModel: null
     property string pageTitle: qsTr("Dự án")
+    // Home shows only the large (batch) projects; opening one lists its videos
+    // together with their social-publishing state.
+    property bool homeMode: false
+    property var publishCounts: ({})
+    property string detailKey: ""
+    property string detailName: ""
+    property int detailIndex: -1
+    property var detailRows: []
     signal requestNewProject(string projectType)
     signal openProject(int index, string projectType)
 
+    function refreshPublishCounts() {
+        if (!homeMode || typeof AppController === "undefined")
+            return;
+        publishCounts = AppController.batchPublishCounts();
+        if (detailKey.length > 0)
+            detailRows = AppController.projectVideosPublishState(detailKey);
+    }
+
+    function showDetail(index, key, name) {
+        detailIndex = index;
+        detailKey = key;
+        detailName = name;
+        detailRows = typeof AppController === "undefined" ? [] : AppController.projectVideosPublishState(key);
+    }
+
+    function closeDetail() {
+        detailKey = "";
+        detailRows = [];
+        detailIndex = -1;
+    }
+
     function resetFilters() {
         searchField.clear()
-        typeFilter.currentIndex = 0
+        typeFilter.currentIndex = homeMode ? 3 : 0
         sortMode.currentIndex = 0
         if (root.projectModel) {
             root.projectModel.query = ""
-            root.projectModel.typeFilter = "all"
+            root.projectModel.typeFilter = homeMode ? "batch" : "all"
             root.projectModel.statusFilter = "all"
             root.projectModel.sortMode = "activity"
         }
@@ -28,19 +57,31 @@ Item {
     function syncFilters() {
         if (!root.projectModel || !searchField || !typeFilter || !sortMode)
             return;
+        if (root.homeMode && root.visible)
+            root.projectModel.typeFilter = "batch";
         searchField.text = root.projectModel.query || "";
         typeFilter.currentIndex = Math.max(0, ["all", "single", "manual", "batch", "download", "publish"].indexOf(root.projectModel.typeFilter));
         sortMode.currentIndex = root.projectModel.sortMode === "name" ? 1 : 0;
         root.projectModel.statusFilter = "all";
     }
 
-    Component.onCompleted: syncFilters()
-    onVisibleChanged: {
+    Component.onCompleted: {
+        syncFilters();
         if (visible)
+            refreshPublishCounts();
+    }
+    onVisibleChanged: {
+        if (visible) {
             syncFilters();
-        else {
+            refreshPublishCounts();
+        } else {
             searchField.deselect();
             searchField.focus = false;
+            closeDetail();
+            // The browser model is shared with the full project list, so give
+            // it back unfiltered when Home is left.
+            if (homeMode && root.projectModel)
+                root.projectModel.typeFilter = "all";
         }
     }
 
@@ -67,6 +108,7 @@ Item {
         PageHeader {
             Layout.fillWidth: true
             title: root.pageTitle
+            subtitle: qsTr("Bấm vào dự án để xem và làm các video bên trong")
 
             StudioButton {
                 id: newProjectButton
@@ -80,7 +122,7 @@ Item {
                     id: newProjectMenu
                     objectName: "newProjectMenu"
                     y: newProjectButton.height + Theme.space4
-                    width: 220
+                    width: 240
                     padding: Theme.space4
                     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutsideParent
                     background: Rectangle {
@@ -89,12 +131,12 @@ Item {
                         border.width: 1
                         border.color: Theme.outlineStrong
                     }
-                    AppMenuItem { text: qsTr("Tự động"); onTriggered: root.requestNewProject("single") }
-                    AppMenuItem { text: qsTr("Thủ công"); onTriggered: root.requestNewProject("manual") }
-                    AppMenuItem { text: qsTr("Hàng loạt"); onTriggered: root.requestNewProject("batch") }
+                    AppMenuItem { text: qsTr("Dự án mới (Nhiều video)"); onTriggered: root.requestNewProject("batch") }
+                    AppMenuItem { text: qsTr("Dự án thủ công"); onTriggered: root.requestNewProject("manual") }
+                    AppMenuItem { text: qsTr("Dự án 1 video nhanh"); onTriggered: root.requestNewProject("single") }
                     MenuSeparator {}
-                    AppMenuItem { text: qsTr("Tải xuống"); onTriggered: root.requestNewProject("download") }
-                    AppMenuItem { text: qsTr("Đăng mạng xã hội"); onTriggered: root.requestNewProject("publish") }
+                    AppMenuItem { text: qsTr("Dự án tải xuống"); onTriggered: root.requestNewProject("download") }
+                    AppMenuItem { text: qsTr("Dự án đăng mạng xã hội"); onTriggered: root.requestNewProject("publish") }
                 }
             }
         }
@@ -115,6 +157,7 @@ Item {
 
             AppComboBox {
                 id: typeFilter
+                visible: !root.homeMode
                 Layout.preferredWidth: 190
                 model: [qsTr("Mọi loại"), qsTr("Tự động"), qsTr("Thủ công"), qsTr("Hàng loạt"), qsTr("Tải xuống"), qsTr("Đăng mạng xã hội")]
                 onActivated: if (root.projectModel)
@@ -137,7 +180,7 @@ Item {
             readonly property int columnCount: Math.max(1, Math.floor((width + Theme.space20) / (224 + Theme.space20)))
             readonly property real cellContentWidth: Math.floor(width / columnCount)
             readonly property real cardWidth: Math.max(1, cellContentWidth - Theme.space20)
-            readonly property real cardHeight: Math.round(cardWidth * 0.56 + 64)
+            readonly property real cardHeight: Math.round(cardWidth * 0.56 + 64 + (root.homeMode ? 22 : 0))
 
             Layout.fillWidth: true
             Layout.fillHeight: true
@@ -152,7 +195,13 @@ Item {
             delegate: ProjectCard {
                 width: projectGrid.cardWidth
                 height: projectGrid.cardHeight
-                onActivated: root.openProject(index, projectType)
+                publishCounts: root.homeMode ? (root.publishCounts[projectKey] || null) : null
+                onActivated: {
+                    if (root.homeMode)
+                        root.showDetail(index, projectKey, projectName);
+                    else
+                        root.openProject(index, projectType);
+                }
                 onOpenRequested: root.openProject(index, projectType)
                 onProjectFolderRequested: {
                     if (AppController.selectProjectFromBrowser(index))
@@ -160,6 +209,7 @@ Item {
                 }
                 onDeleteRequested: AppController.deleteProjectFromBrowser(index)
                 onRenameRequested: key => AppController.requestProjectRename(key)
+                onMoveToProjectRequested: key => AppController.requestMoveToProject(key)
             }
 
             ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
@@ -167,16 +217,47 @@ Item {
             EmptyState {
                 anchors.centerIn: parent
                 visible: projectGrid.count === 0
-                title: searchField.text.length > 0 ? qsTr("Không tìm thấy dự án") : qsTr("Chưa có dự án")
+                title: searchField.text.length > 0 ? qsTr("Không tìm thấy dự án") : qsTr("Chưa có dự án nào")
                 message: searchField.text.length > 0
                     ? qsTr("Thử từ khóa hoặc bộ lọc khác.")
-                    : qsTr("Tạo dự án để bắt đầu.")
+                    : qsTr("Tạo dự án mới để gom nhóm và làm các video bên trong.")
                 StudioButton {
                     visible: searchField.text.length > 0
                     text: qsTr("Xóa bộ lọc")
                     onClicked: root.resetFilters()
                 }
+                StudioButton {
+                    visible: searchField.text.length === 0
+                    variant: "primary"
+                    iconName: "add"
+                    text: qsTr("Tạo dự án mới")
+                    onClicked: root.requestNewProject("batch")
+                }
             }
+        }
+    }
+
+    ProjectPublishDetail {
+        id: publishDetail
+
+        objectName: "homeProjectDetail"
+        anchors.fill: parent
+        z: 2
+        visible: root.homeMode && root.detailKey.length > 0
+        projectKey: root.detailKey
+        projectName: root.detailName
+        rows: root.detailRows
+        onCloseRequested: root.closeDetail()
+        onOpenProjectRequested: {
+            const index = root.detailIndex;
+            root.closeDetail();
+            root.openProject(index, "batch");
+        }
+
+        Rectangle {
+            anchors.fill: parent
+            z: -1
+            color: Theme.window
         }
     }
 }

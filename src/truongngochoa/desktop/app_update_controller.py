@@ -361,6 +361,12 @@ class AppUpdateController(QObject):
                 except OSError:
                     pass
 
+    def _emit_changed(self) -> None:
+        try:
+            self.changed.emit()
+        except RuntimeError:
+            pass
+
     def check(self, *, manual: bool = False) -> None:
         if self._state in {"downloading", "verifying", "installing", "preparing", "ready", "restarting"}:
             return
@@ -370,7 +376,7 @@ class AppUpdateController(QObject):
         self._manual_request = bool(manual)
         self._state = "checking"
         self._error = ""
-        self.changed.emit()
+        self._emit_changed()
 
         def worker() -> None:
             try:
@@ -439,11 +445,11 @@ class AppUpdateController(QObject):
     def _apply_event(self, event: dict) -> None:
         if event["kind"] == "download_progress":
             self._download_progress = event["value"]
-            self.changed.emit()
+            self._emit_changed()
             return
         if event["kind"] == "verifying":
             self._state = "verifying"
-            self.changed.emit()
+            self._emit_changed()
             return
         if event["kind"] == "installer_ready":
             if self._stop.is_set():
@@ -460,13 +466,16 @@ class AppUpdateController(QObject):
             except OSError:
                 self._state = "available"
                 self._error = "Không thể mở bộ cài. Hãy thử lại."
-            self.changed.emit()
+            self._emit_changed()
             return
         if event["kind"] == "install_error":
             self._state = "available"
             self._error = event.get("message", "")
-            self.changed.emit()
-            self._host.appUpdateAvailable.emit()
+            self._emit_changed()
+            try:
+                self._host.appUpdateAvailable.emit()
+            except RuntimeError:
+                pass
             return
         self._last_checked = time.monotonic()
         if event["kind"] == "result":
@@ -478,19 +487,22 @@ class AppUpdateController(QObject):
             # availability flag, particularly after update recovery.
             self._state = "available" if self.available else "current"
             self._error = ""
-            self.changed.emit()
+            self._emit_changed()
         elif event["kind"] == "no_release":
             self._state = "no_release"
             self._error = ""
             self._latest_version = ""
             self._installer = {}
-            self.changed.emit()
+            self._emit_changed()
         else:
             self._state = "error"
             self._error = event.get("message", "")
-            self.changed.emit()
+            self._emit_changed()
         if self._manual_request:
-            self._host.appUpdateAvailable.emit()
+            try:
+                self._host.appUpdateAvailable.emit()
+            except RuntimeError:
+                pass
 
     def shutdown(self) -> None:
         self._stop.set()

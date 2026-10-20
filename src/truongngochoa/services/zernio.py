@@ -186,6 +186,8 @@ class ZernioClient:
         allow_duet: bool = True,
         allow_stitch: bool = True,
         ai_generated: bool = False,
+        scheduled_for: str = "",
+        timezone: str = "",
     ) -> Any:
         body: dict[str, Any] = {
             "content": content,
@@ -201,7 +203,11 @@ class ZernioClient:
                 "video_made_with_ai": bool(ai_generated),
             },
         }
-        if publish_now:
+        if scheduled_for:
+            body["scheduledFor"] = str(scheduled_for).strip()
+            if timezone:
+                body["timezone"] = str(timezone).strip()
+        elif publish_now:
             body["publishNow"] = True
         return self._request("POST", "/posts", body, headers={"x-request-id": request_id})
 
@@ -222,6 +228,8 @@ class ZernioClient:
         share_to_feed: bool = True,
         ai_generated: bool = False,
         first_comment: str = "",
+        scheduled_for: str = "",
+        timezone: str = "",
     ) -> Any:
         """Create one short-form video post for a supported Zernio connection."""
         platform_name = normalize_platform(platform)
@@ -237,6 +245,8 @@ class ZernioClient:
                 allow_duet=allow_duet,
                 allow_stitch=allow_stitch,
                 ai_generated=ai_generated,
+                scheduled_for=scheduled_for,
+                timezone=timezone,
             )
 
         platform_data: dict[str, Any]
@@ -271,7 +281,11 @@ class ZernioClient:
                 }
             ],
         }
-        if publish_now:
+        if scheduled_for:
+            body["scheduledFor"] = str(scheduled_for).strip()
+            if timezone:
+                body["timezone"] = str(timezone).strip()
+        elif publish_now:
             body["publishNow"] = True
         return self._request("POST", "/posts", body, headers={"x-request-id": request_id})
 

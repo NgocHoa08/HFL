@@ -26,9 +26,9 @@ AppDialog {
         textRole: "label"
         valueRole: "value"
         model: [
-            {value: "result", label: qsTr("Phụ đề kết quả"), available: Boolean(root.configuration.result)},
-            {value: "source", label: qsTr("Phụ đề ngôn ngữ gốc"), available: Boolean(root.configuration.source)},
-            {value: "both", label: qsTr("Cả hai · 2 tệp SRT"), available: Boolean(root.configuration.result && root.configuration.source)}
+            {value: "result", label: qsTr("Phụ đề kết quả"), available: Boolean(root.configuration && root.configuration.result)},
+            {value: "source", label: qsTr("Phụ đề ngôn ngữ gốc"), available: Boolean(root.configuration && root.configuration.source)},
+            {value: "both", label: qsTr("Cả hai · 2 tệp SRT"), available: Boolean(root.configuration && root.configuration.result && root.configuration.source)}
         ]
     }
     footerActions: [
@@ -37,9 +37,11 @@ AppDialog {
             objectName: "confirmSrtExport"
             text: qsTr("Xuất")
             variant: "primary"
-            enabled: !root.controller.isProcessing && !root.controller.videoExportBusy && !root.controller.mediaImportBusy
-                && (selection.currentValue === "source" ? root.configuration.source
-                    : selection.currentValue === "both" ? root.configuration.source && root.configuration.result : root.configuration.result)
+            enabled: Boolean(!root.controller.isProcessing && !root.controller.videoExportBusy && !root.controller.mediaImportBusy
+                && root.configuration
+                && (selection.currentValue === "source" ? Boolean(root.configuration.source)
+                    : selection.currentValue === "both" ? Boolean(root.configuration.source && root.configuration.result)
+                    : Boolean(root.configuration.result)))
             onClicked: {
                 if (root.controller.exportSelectedSrt(selection.currentValue, root.configuration.videoId))
                     root.close();

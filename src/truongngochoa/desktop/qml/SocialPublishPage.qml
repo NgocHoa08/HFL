@@ -8,8 +8,8 @@ import "."
 Item {
     id: root
 
-    function confirmPublish(row, publishAll) {
-        publishConfirmationLoader.invoke("openForPublish", [row, publishAll])
+    function confirmPublish(row, publishAll, initialScheduledFor) {
+        publishConfirmationLoader.invoke("openForPublish", [row, publishAll, initialScheduledFor || ""])
     }
 
     ColumnLayout {
@@ -212,6 +212,12 @@ Item {
                         iconGlyph: "\uE7C3"
                         onTriggered: projectSourceDialogLoader.invoke("openForSelection", [])
                     }
+                    MenuSeparator {}
+                    AppMenuItem {
+                        text: qsTr("Cắt chia đôi video…")
+                        iconGlyph: "\uE8C8"
+                        onTriggered: AppController.openVideoSplit()
+                    }
                 }
             }
         }
@@ -243,8 +249,8 @@ Item {
 
                 delegate: SocialPublishRow {
                     width: queueList.width
-                    onPublishRequested: root.confirmPublish(index, false)
-                    onEditRequested: postEditorLoader.invoke("openForItem", [index, fileName, caption, hashtags])
+                    onPublishRequested: function(itemSched) { root.confirmPublish(index, false, itemSched); }
+                    onEditRequested: postEditorLoader.invoke("openForItem", [index, fileName, caption, hashtags, scheduledFor])
                 }
 
                 ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
@@ -278,8 +284,13 @@ Item {
         sourceComponent: Component {
             SocialPostEditorDialog {
                 onClosed: postEditorLoader.release()
-                onSaveRequested: function(row, caption, hashtags) {
-                    AppController.updateTikTokPublishItem(row, caption, hashtags)
+                onSaveRequested: function(row, caption, hashtags, scheduledFor) {
+                    AppController.updateTikTokPublishItem(row, caption, hashtags, scheduledFor)
+                }
+                onScheduleRequested: function(row, caption, hashtags, scheduledFor) {
+                    AppController.updateTikTokPublishItem(row, caption, hashtags, scheduledFor)
+                    AppController.setZernioPublishConsent(true)
+                    AppController.publishTikTokItemScheduled(row, scheduledFor)
                 }
             }
         }

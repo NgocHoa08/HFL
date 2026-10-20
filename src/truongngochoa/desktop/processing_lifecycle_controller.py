@@ -19,6 +19,10 @@ class ProcessingLifecycleController:
 
     def enqueue_video(self, video_id: str) -> bool:
         host = self._host
+        from truongngochoa.desktop.qml_controller import TruongNgocHoaController
+
+        if not TruongNgocHoaController._can_process_license(host, consume=False):
+            return False
         if getattr(host, "_model_setup_state", "ready") != "ready":
             host._status_message = "Finish model setup before starting a video."
             host.statusMessageChanged.emit()

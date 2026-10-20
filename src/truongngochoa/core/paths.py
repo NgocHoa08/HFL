@@ -12,7 +12,7 @@ def is_frozen() -> bool:
 
 def runtime_overrides_allowed() -> bool:
     """Whether test/source runs may redirect app-owned runtime paths."""
-    return not is_frozen() or os.getenv("TRUONGNGOCHOA_SMOKE_TEST") == "1"
+    return not is_frozen() or os.getenv("TRUONGNGOCHOA_SMOKE_TEST") == "1" or os.getenv("HAIZFLOW_SMOKE_TEST") == "1"
 
 
 def bundle_root() -> Path:
@@ -52,9 +52,11 @@ def install_root() -> Path:
             root = Path(value)
             if not value or not root.is_absolute() or str(root).startswith("\\\\"):
                 raise ValueError("Hãy chạy bộ xử lý từ ứng dụng Trương Ngọc Hoà, không mở EXE của gói tài nguyên trực tiếp.")
-            from truongngochoa.update.state import Layout
+            if (root / "update-layout.json").is_file():
+                from truongngochoa.update.state import Layout
 
-            return Layout(root).root
+                return Layout(root).root
+            return root.resolve()
         # Infer from the executable, never trust an inherited install-root
         # environment variable. Provisioning marker and no-reparse checks are
         # required before using the persistent root.

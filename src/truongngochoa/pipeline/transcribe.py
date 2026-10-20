@@ -1363,10 +1363,53 @@ def transcribe(
                 {**segment, "language": detected_language or "en", "language_confidence": 1.0}
                 for segment in result.get("segments", []) if segment.get("text", "").strip()
             ]
+            if not initial_segments:
+                log_to_video(
+                    video_id,
+                    "WhisperX VAD did not detect speech segments. Attempting direct Whisper decoding without VAD filtering...",
+                )
+                raw_model = getattr(getattr(asr_model, "model", None), "transcribe", None)
+                if callable(raw_model):
+                    try:
+                        check_cancellation(video_id)
+                        fallback_segs, fallback_info = raw_model(
+                            audio,
+                            vad_filter=False,
+                            beam_size=5,
+                            condition_on_previous_text=False,
+                        )
+                        detected_language = getattr(fallback_info, "language", None) or detected_language or "en"
+                        recovered = []
+                        for seg in fallback_segs:
+                            text = (getattr(seg, "text", "") or "").strip()
+                            no_speech_prob = float(getattr(seg, "no_speech_prob", 0.0) or 0.0)
+                            if text and no_speech_prob < 0.85:
+                                start_t = round(float(getattr(seg, "start", 0.0)), 3)
+                                end_t = round(float(getattr(seg, "end", start_t)), 3)
+                                if end_t > start_t:
+                                    recovered.append({
+                                        "start": start_t,
+                                        "end": end_t,
+                                        "text": text,
+                                        "language": detected_language,
+                                        "language_confidence": 1.0,
+                                    })
+                        if recovered:
+                            initial_segments = recovered
+                            log_to_video(
+                                video_id,
+                                f"Direct Whisper decoding recovered {len(initial_segments)} speech segment(s) "
+                                f"(detected language: '{detected_language}').",
+                            )
+                    except Exception as exc:
+                        log_to_video(video_id, f"Direct Whisper decoding fallback failed: {exc}")
             if checkpoint and initial_segments:
                 checkpoint.save("transcribed", initial_segments, detected_language)
         if not initial_segments:
-            raise RuntimeError("WhisperX did not return any speech segments.")
+            raise RuntimeError(
+                "WhisperX did not return any speech segments. Không tìm thấy lời thoại trong video "
+                "(Video không có giọng nói hoặc âm lượng quá nhỏ). Hãy kiểm tra lại tệp âm thanh nguồn hoặc tắt tính năng tách giọng."
+            )
         log_to_video(video_id, f"Transcription completed. Primary detected language: '{detected_language}'.")
         if progress_callback and not (checkpoint and checkpoint.reached("aligned")):
             progress_callback("transcribed", f"Detected {detected_language or 'unknown'} speech")

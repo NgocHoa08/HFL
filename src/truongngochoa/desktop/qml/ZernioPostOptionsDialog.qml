@@ -153,6 +153,17 @@ AppDialog {
         }
     }
 
+    Text {
+        Layout.fillWidth: true
+        visible: !publishNowCheck.checked
+        text: qsTr("Khi tắt 'Đăng ngay', bạn có thể hẹn giờ đăng khi bấm 'Đăng' hoặc 'Đăng tất cả'.")
+        color: Theme.textMuted
+        font.family: Theme.fontFamily
+        font.pixelSize: TypeScale.label
+        textFormat: Text.PlainText
+        wrapMode: Text.WordWrap
+    }
+
     ColumnLayout {
         Layout.fillWidth: true
         visible: root.platform === "facebook" || root.platform === "instagram"

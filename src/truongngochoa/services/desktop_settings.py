@@ -17,6 +17,7 @@ DEFAULT_SETTINGS = {
     "processing_device_origin": "detected",
     "translation_model": "auto",
     "keep_models_warm": True,
+    "subtitle_source": "audio",
     "manual_project_cache_gib": 4,
     "manual_global_cache_gib": 16,
     "manual_editor_inspector_width": 356,
@@ -135,6 +136,11 @@ def save_settings(settings: dict) -> dict:
             else "auto"
         ),
         "keep_models_warm": bool(merged.get("keep_models_warm", True)),
+        "subtitle_source": (
+            merged.get("subtitle_source")
+            if merged.get("subtitle_source") in {"audio", "ocr", "auto"}
+            else "audio"
+        ),
         "manual_project_cache_gib": bounded_integer("manual_project_cache_gib", 4, 1, 64),
         "manual_global_cache_gib": bounded_integer("manual_global_cache_gib", 16, 4, 256),
         "manual_editor_inspector_width": bounded_integer("manual_editor_inspector_width", 356, 300, 520),

@@ -248,7 +248,7 @@ StackLayout {
         Layout.fillHeight: true
         Layout.margins: 0
         onRequestNewProject: function (projectType) {
-            root.newProjectRequested(projectType, "home");
+            root.newProjectRequested(projectType || "batch", "home");
         }
         onOpenProject: function (index, projectType) {
             // qmllint disable missing-property
@@ -266,7 +266,7 @@ StackLayout {
         Layout.fillHeight: true
         Layout.margins: 0
         onRequestNewProject: function (projectType) {
-            root.newProjectRequested(projectType, "projects");
+            root.newProjectRequested(projectType || "batch", "projects");
         }
         onOpenProject: function (index, projectType) {
             // qmllint disable missing-property

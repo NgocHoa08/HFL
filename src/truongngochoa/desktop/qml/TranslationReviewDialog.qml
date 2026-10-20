@@ -14,7 +14,7 @@ FloatingToolDialog {
     openMaximized: true
     expandedWidth: 1480
     expandedHeight: 900
-    toolTitle: qsTr("Duyệt phụ đề")
+    toolTitle: AppController.selectedStatus === "done" ? qsTr("Xem & Sửa phụ đề") : qsTr("Duyệt phụ đề")
     toolSubtitle: qsTr("%1 đoạn · %2").arg(segments.length).arg(AppController.selectedFileName)
 
     property var segments: []
@@ -520,7 +520,7 @@ FloatingToolDialog {
         canUndo: root.undoStack.length > 0
         canRedo: root.redoStack.length > 0
         canCommit: root.segments.length > 0 && !root.approvalInProgress
-        primaryText: root.manualEditing ? qsTr("Lưu phụ đề") : qsTr("Duyệt và tiếp tục")
+        primaryText: root.manualEditing ? qsTr("Lưu phụ đề") : (AppController.selectedStatus === "done" ? qsTr("Lưu và cập nhật video") : qsTr("Duyệt và tiếp tục"))
         onPlaybackToggled: root.togglePreviewPlayback()
         onScrubStarted: function(position) { root.beginPreviewScrub(position) }
         onScrubbed: function(position) { root.scrubPreview(position) }

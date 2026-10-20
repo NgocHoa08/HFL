@@ -42,9 +42,8 @@ def render(*, preview: Path | None = None) -> None:
     painter.save()
     painter.setClipPath(clip)
     logo = QImage(str(BRANDING / "truongngochoa-mark.png"))
-    # The supplied mark has an opaque margin outside its rounded tile. Crop
-    # the source tile and clip its corners while composing, not by editing it.
-    painter.drawImage(logo_rectangle, logo, QRectF(96, 92, 1062, 1068))
+    # Fit the brand mark into the rounded tile and clip its corners while composing.
+    painter.drawImage(logo_rectangle, logo, QRectF(logo.rect()))
     painter.restore()
     outline = QLinearGradient(502, 142, 698, 338)
     outline.setColorAt(0, QColor("#7e5745"))

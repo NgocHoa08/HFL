@@ -16,21 +16,24 @@ Control {
     required property int progress
     required property string thumbnailSource
     required property string videoSize
+    // Optional {total, published, pending, failed, unpublished} counts.
+    property var publishCounts: null
 
     signal activated
     signal openRequested
     signal projectFolderRequested
     signal deleteRequested
     signal renameRequested(string key)
+    signal moveToProjectRequested(string key)
 
     readonly property string statusLabel: status === "pending" ? qsTr("Đang chờ") : status === "empty" ? qsTr("Chưa chọn video nguồn") : status === "ready" || status === "manual_ready" ? qsTr("Sẵn sàng") : status === "processing" ? qsTr("Đang xử lý") : status === "done" ? qsTr("Hoàn tất") : status === "failed" ? qsTr("Lỗi") : status === "cancelled" ? qsTr("Đã hủy") : status === "paused" ? qsTr("Đã tạm dừng") : status === "awaiting_review" ? qsTr("Cần duyệt") : I18n.taskStateLabel(status)
     readonly property string typeLabel: projectType === "manual" ? qsTr("Thủ công")
-        : projectType === "batch" ? qsTr("Hàng loạt")
+        : projectType === "batch" ? qsTr("Dự án")
         : projectType === "download" ? qsTr("Tải xuống")
         : projectType === "publish" ? qsTr("Đăng mạng xã hội") : qsTr("Tự động")
     readonly property color statusColor: status === "done" ? Theme.success : status === "failed" || status === "cancelled" ? Theme.danger : status === "processing" ? Theme.warning : status === "awaiting_review" || status === "manual_ready" ? Theme.interactive : Theme.textMuted
 
-    height: Math.round(width * 0.56 + 64)
+    height: Math.round(width * 0.56 + 64 + (publishCounts ? 22 : 0))
     padding: 0
     background: Rectangle {
         objectName: "projectCardBackground"
@@ -110,6 +113,12 @@ Control {
         }
 
         MenuSeparator {}
+
+        AppMenuItem {
+            text: qsTr("Chuyển vào dự án...")
+            iconGlyph: "\uE8DE"
+            onTriggered: root.moveToProjectRequested(root.menuProjectKey)
+        }
 
         AppMenuItem {
             text: qsTr("Đổi tên")
@@ -227,7 +236,7 @@ Control {
                 Text {
                     Layout.fillWidth: true
                     text: root.projectType === "batch"
-                        ? qsTr("%1 video").arg(root.videoCount)
+                        ? (root.videoCount > 0 ? qsTr("%1 video").arg(root.videoCount) : qsTr("Chưa có video"))
                         : root.projectType === "publish"
                             ? qsTr("%1 bài đăng").arg(root.videoCount)
                             : root.statusLabel
@@ -252,6 +261,43 @@ Control {
                     glyph: "\uE76C"
                     iconColor: hoverHandler.hovered ? Theme.text : Theme.textSubtle
                     iconSize: Theme.iconSmall
+                }
+            }
+
+            Row {
+                objectName: "projectPublishSummary"
+                visible: root.publishCounts !== null && root.publishCounts !== undefined
+                spacing: Theme.space8
+
+                Repeater {
+                    model: root.publishCounts ? [
+                        {label: qsTr("Đã đăng"), value: root.publishCounts.published || 0, color: Theme.success},
+                        {label: qsTr("Chờ"), value: root.publishCounts.pending || 0, color: Theme.warning},
+                        {label: qsTr("Chưa đăng"), value: (root.publishCounts.unpublished || 0) + (root.publishCounts.failed || 0), color: Theme.textMuted}
+                    ] : []
+
+                    delegate: Row {
+                        id: summaryItem
+
+                        required property var modelData
+
+                        spacing: 4
+
+                        Rectangle {
+                            width: 6
+                            height: 6
+                            radius: 3
+                            anchors.verticalCenter: parent.verticalCenter
+                            color: summaryItem.modelData.color
+                        }
+
+                        Text {
+                            text: summaryItem.modelData.value + " " + summaryItem.modelData.label
+                            color: Theme.textMuted
+                            font.pixelSize: Theme.caption
+                            textFormat: Text.PlainText
+                        }
+                    }
                 }
             }
         }

@@ -394,11 +394,20 @@ def _ocr_engine():
         "Det.model_path": str(model_dir / "subtitle-det.onnx"),
         "Rec.model_path": str(model_dir / "subtitle-rec.onnx"),
         "Cls.model_path": str(model_dir / "subtitle-cls.onnx"),
+        "Det.limit_type": "max",
+        "Det.limit_side_len": 736,
     })
 
 
 def _ocr_candidates(frame_path: Path, frame: int, source_width: int, source_height: int) -> list[TextCandidate]:
-    output = _ocr_engine()(str(frame_path))
+    import cv2
+    import numpy as np
+
+    data = np.fromfile(str(frame_path), dtype=np.uint8)
+    img = cv2.imdecode(data, cv2.IMREAD_COLOR) if len(data) else None
+    if img is None:
+        return []
+    output = _ocr_engine()(img)
     boxes = getattr(output, "boxes", None)
     texts = getattr(output, "txts", None)
     scores = getattr(output, "scores", None)

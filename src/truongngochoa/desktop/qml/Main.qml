@@ -64,7 +64,7 @@ ApplicationWindow {
     readonly property bool routeCanGoBack: routeHistoryIndex > 0
     readonly property bool routeCanGoForward: routeHistoryIndex < routeHistory.length - 1
     readonly property bool projectWorkspaceVisible: currentRoute === routeSingleWorkspace || currentRoute === routeManualWorkspace || currentRoute === routeBatchWorkspace || currentRoute === routeBatchVideo || currentRoute === routeDownloadWorkspace || currentRoute === routePublishWorkspace
-    readonly property bool globalNavigationBlocked: lazyDialogVisible(projectSetupDialogLoader) || lazyDialogVisible(urlImportDialogLoader) || lazyDialogVisible(downloadProjectSourceDialogLoader) || lazyDialogVisible(batchSettingsDialogLoader) || lazyDialogVisible(translationReviewDialogLoader) || lazyDialogVisible(aboutDialogLoader) || lazyDialogVisible(copyrightDialogLoader) || lazyDialogVisible(licenseDialogLoader) || appAlertDialog.visible || modelSetupOverlayLoader.active
+    readonly property bool globalNavigationBlocked: lazyDialogVisible(projectSetupDialogLoader) || lazyDialogVisible(urlImportDialogLoader) || lazyDialogVisible(downloadProjectSourceDialogLoader) || lazyDialogVisible(batchSettingsDialogLoader) || lazyDialogVisible(translationReviewDialogLoader) || lazyDialogVisible(aboutDialogLoader) || lazyDialogVisible(copyrightDialogLoader) || lazyDialogVisible(licenseDialogLoader) || lazyDialogVisible(videoSplitDialogLoader) || appAlertDialog.visible || modelSetupOverlayLoader.active
     readonly property bool downloadCanGoBack: routeHost.downloadCanGoBack
     readonly property bool downloadCanGoForward: routeHost.downloadCanGoForward
     readonly property bool canNavigateBack: !globalNavigationBlocked && (downloadCanGoBack || routeCanGoBack)
@@ -275,6 +275,13 @@ ApplicationWindow {
     }
 
     LazyDialogLoader {
+        id: moveToProjectDialogLoader
+        sourceComponent: Component {
+            MoveToProjectDialog { onClosed: moveToProjectDialogLoader.release() }
+        }
+    }
+
+    LazyDialogLoader {
         id: videoExportDialogLoader
         sourceComponent: Component { VideoExportDialog { onClosed: videoExportDialogLoader.release() } }
     }
@@ -340,6 +347,13 @@ ApplicationWindow {
         }
     }
 
+    LazyDialogLoader {
+        id: videoSplitDialogLoader
+        sourceComponent: Component {
+            VideoSplitDialog { onClosed: videoSplitDialogLoader.release() }
+        }
+    }
+
 
     AppAlertDialog {
         id: appAlertDialog
@@ -373,6 +387,9 @@ ApplicationWindow {
         target: AppController
         function onProjectRenameRequested(key, name) {
             projectRenameDialogLoader.invoke("openForProject", [key, name]);
+        }
+        function onMoveToProjectRequested(key) {
+            moveToProjectDialogLoader.invoke("openForProject", [key]);
         }
 
         function onVideoDeleted() {
@@ -411,6 +428,10 @@ ApplicationWindow {
 
         function onLicenseDialogRequested() {
             licenseDialogLoader.invoke("open", []);
+        }
+
+        function onVideoSplitRequested() {
+            videoSplitDialogLoader.invoke("open", []);
         }
 
         function onAppAlertRequested(title, message, severity) {
@@ -506,6 +527,7 @@ ApplicationWindow {
             onAboutRequested: aboutDialogLoader.invoke("open", [])
             onCopyrightRequested: copyrightDialogLoader.invoke("open", [])
             onLicenseRequested: licenseDialogLoader.invoke("open", [])
+            onSplitVideoRequested: videoSplitDialogLoader.invoke("open", [])
         }
 
         RowLayout {
@@ -521,7 +543,7 @@ ApplicationWindow {
                 currentSection: root.navigationSection()
                 onLicenseRequested: licenseDialogLoader.invoke("open", [])
                 onSectionRequested: function (section) {
-                    AppController.refreshVideos();
+                    AppController.refreshVideosIfChanged();
                     if (section === "single")
                         root.navigate(root.routeSingleProjects);
                     else if (section === "manual")
@@ -556,7 +578,7 @@ ApplicationWindow {
                         root.openProjectWorkspace(returnRoute, workspaceRoute);
                     }
                     onNavigateRequested: function (route) {
-                        AppController.refreshVideos();
+                        AppController.refreshVideosIfChanged();
                         root.navigate(route);
                     }
                     onReviewTranslationRequested: translationReviewDialogLoader.invoke("open", [])

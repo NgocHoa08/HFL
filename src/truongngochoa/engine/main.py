@@ -355,6 +355,22 @@ def run_file_request(request_path: Path) -> int:
                                            str(payload["video_id"]), progress,
                                            model_directory=str(payload.get("model_directory") or ""),
                                            runtime_callback=report_runtime)}
+        elif operation == "subtitle_ocr" and payload.get("mode") == "read":
+            from truongngochoa.pipeline.subtitle_reader import read_subtitles
+
+            def progress(current, total):
+                _status(status_path, stage="ocr", detail="", current=int(current), total=int(total))
+
+            segments, language = read_subtitles(
+                str(payload["video_path"]),
+                str(payload["output_json_path"]),
+                str(payload["video_id"]),
+                str(payload["temp_dir"]),
+                region_override=payload.get("region_override") or None,
+                source_language=str(payload.get("source_language") or "auto"),
+                progress_callback=progress,
+            )
+            result = {"segments": segments, "detected_language": language}
         elif operation == "subtitle_ocr":
             from truongngochoa.pipeline.subtitle_ocr import detect_original_subtitle_region
 

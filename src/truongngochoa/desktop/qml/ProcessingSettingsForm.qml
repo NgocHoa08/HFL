@@ -125,6 +125,26 @@ GridLayout {
 
             SettingLabel {
                 Layout.fillWidth: true
+                text: qsTr("Nguồn lời thoại")
+                helpText: qsTr("Giọng nói: nhận dạng bằng Whisper. Phụ đề video: đọc phụ đề cứng bằng OCR rồi dịch và lồng tiếng. Tự động: thử đọc phụ đề trước, không có thì dùng giọng nói.")
+            }
+            StudioComboBox {
+                id: subtitleSourceCombo
+                Layout.fillWidth: true
+                enabled: root.editable
+                textRole: "label"
+                valueRole: "value"
+                model: [
+                    { "value": "audio", "label": qsTr("Giọng nói (Whisper)") },
+                    { "value": "ocr", "label": qsTr("Phụ đề trên video (OCR)") },
+                    { "value": "auto", "label": qsTr("Tự động (phụ đề → giọng nói)") }
+                ]
+                currentIndex: Math.max(0, indexOfValue(AppController.subtitleSource))
+                onActivated: AppController.subtitleSource = currentValue
+            }
+
+            SettingLabel {
+                Layout.fillWidth: true
                 text: qsTr("Model dịch")
                 helpText: qsTr("HY-MT2 chạy cục bộ. Gemini cần Internet và API key riêng; Google có thể tính phí theo mức sử dụng.")
             }
@@ -238,6 +258,21 @@ GridLayout {
                 SettingLabel {
                     Layout.fillWidth: true
                     text: qsTr("Phụ đề gốc")
+                }
+                StudioButton {
+                    objectName: "readSubtitleOcrButton"
+                    text: AppController.subtitleSource === "ocr" ? qsTr("✓ Đọc phụ đề") : qsTr("Đọc phụ đề")
+                    variant: AppController.subtitleSource === "ocr" ? "primary" : "secondary"
+                    enabled: root.editable
+                    toolTipText: qsTr("Bật/tắt đọc phụ đề trên video bằng OCR để dịch và lồng tiếng")
+                    showToolTip: true
+                    onClicked: {
+                        if (AppController.subtitleSource === "ocr") {
+                            AppController.subtitleSource = "audio";
+                        } else {
+                            AppController.subtitleSource = "ocr";
+                        }
+                    }
                 }
                 StudioButton {
                     objectName: "sourceCoverButton"
